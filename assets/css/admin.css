@@ -1,0 +1,218 @@
+/* Page Builder Pro - GrapesJS integration */
+html, body {
+	height: 100%;
+}
+
+#mrspb-builder,
+#mrspb-builder #gjs {
+	height: 100%;
+}
+
+#mrspb-builder {
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	background: #0f172a;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+#wpadminbar,
+#adminmenumain,
+#wpfooter,
+#screen-meta,
+.update-nag,
+.notice,
+.wrap h1,
+#wpbody-content > .wrap > h1 {
+	display: none !important;
+}
+
+#wpcontent {
+	margin-left: 0 !important;
+	padding-left: 0 !important;
+}
+
+#wpbody-content {
+	padding: 0 !important;
+}
+
+.mrspb-topbar {
+	height: 56px;
+	background: #1e293b;
+	border-bottom: 1px solid #334155;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 16px;
+	gap: 12px;
+	flex-shrink: 0;
+}
+
+.mrspb-topbar-left,
+.mrspb-topbar-right {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.mrspb-logo {
+	font-weight: 700;
+	font-size: 16px;
+	color: #fff;
+}
+
+.mrspb-page-title {
+	color: #94a3b8;
+	font-size: 13px;
+	border-left: 1px solid #334155;
+	padding-left: 12px;
+}
+
+.mrspb-btn {
+	background: #334155;
+	border: 1px solid #475569;
+	color: #e2e8f0;
+	border-radius: 6px;
+	padding: 7px 14px;
+	cursor: pointer;
+	font-size: 13px;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+}
+
+.mrspb-btn:hover {
+	background: #475569;
+}
+
+.mrspb-primary {
+	background: #2563eb;
+	border-color: #2563eb;
+	color: #fff;
+}
+
+.mrspb-primary:hover {
+	background: #1d4ed8;
+}
+
+/* Dashboard */
+.mrspb-wrap h1 {
+	color: #0f172a;
+}
+
+.mrspb-dashboard {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+	margin-top: 20px;
+}
+
+.mrspb-card {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 24px;
+	box-shadow: 0 4px 12px rgba(0,0,0,.05);
+}
+
+.mrspb-card h2 {
+	margin-top: 0;
+	font-size: 18px;
+}
+
+/* GrapesJS custom theme tweaks */
+.gjs-one-bg { background-color: #1e293b; }
+.gjs-two-color { color: #e2e8f0; }
+.gjs-three-bg { background-color: #334155; }
+.gjs-four-color,
+.gjs-four-color-h:hover { color: #60a5fa; }
+.gjs-clm-tag { background-color: #2563eb; }
+
+#blocks {
+	height: 100%;
+}
+
+.gjs-block {
+	background: #0f172a;
+	border: 1px solid #334155;
+	color: #cbd5e1;
+	border-radius: 8px;
+	margin: 6px 8px;
+}
+
+.gjs-block:hover {
+	border-color: #2563eb;
+	color: #fff;
+}
+
+.gjs-block-c svg {
+	fill: #94a3b8;
+}
+
+.gjs-title {
+	color: #e2e8f0;
+}
+
+.gjs-sm-sector .gjs-sm-title,
+.gjs-layer-name,
+.gjs-trt-trait {
+	color: #e2e8f0;
+}
+
+.gjs-field,
+.gjs-sm-field select,
+.gjs-sm-field input,
+.gjs-clm-select select,
+.gjs-trt-field input,
+.gjs-trt-field select,
+.gjs-trt-field textarea {
+	background: #0f172a;
+	border-color: #334155;
+	color: #e2e8f0;
+}
+
+.gjs-radio-item input:checked + .gjs-radio-item-label {
+	background: #2563eb;
+	color: #fff;
+}
+
+.gjs-sm-sector .gjs-sm-property,
+.gjs-trt-trait {
+	border-color: #334155;
+}
+
+.gjs-resizer-h,
+.gjs-com-pointer,
+.gjs-badge,
+.gjs-toolbar {
+	background: #2563eb;
+	color: #fff;
+}
+
+.gjs-off-prv {
+	background: #1e293b;
+	color: #e2e8f0;
+}
+
+.gjs-pn-commands,
+.gjs-pn-devices-c,
+.gjs-pn-options,
+.gjs-pn-views,
+.gjs-pn-views-container {
+	background: #1e293b;
+}
+
+.gjs-pn-btn:hover,
+.gjs-pn-btn.gjs-pn-active {
+	background: #334155;
+}
+
+.gjs-pn-btn {
+	color: #94a3b8;
+}
+
+.gjs-pn-btn.gjs-pn-active {
+	color: #60a5fa;
+}
