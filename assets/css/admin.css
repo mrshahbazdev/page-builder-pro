@@ -97,7 +97,7 @@ html, body {
 	background: #1d4ed8;
 }
 
-/* Dashboard */
+/* Dashboard & Settings */
 .mrspb-wrap h1 {
 	color: #0f172a;
 }
@@ -122,6 +122,14 @@ html, body {
 	font-size: 18px;
 }
 
+.mrspb-card input[type="color"] {
+	padding: 0;
+	border: none;
+	width: 60px;
+	height: 30px;
+	cursor: pointer;
+}
+
 /* GrapesJS custom theme tweaks */
 .gjs-one-bg { background-color: #1e293b; }
 .gjs-two-color { color: #e2e8f0; }
@@ -129,10 +137,6 @@ html, body {
 .gjs-four-color,
 .gjs-four-color-h:hover { color: #60a5fa; }
 .gjs-clm-tag { background-color: #2563eb; }
-
-#blocks {
-	height: 100%;
-}
 
 .gjs-block {
 	background: #0f172a;
@@ -167,10 +171,23 @@ html, body {
 .gjs-clm-select select,
 .gjs-trt-field input,
 .gjs-trt-field select,
-.gjs-trt-field textarea {
+.gjs-trt-field textarea,
+.gjs-trt-field button {
 	background: #0f172a;
 	border-color: #334155;
 	color: #e2e8f0;
+}
+
+.gjs-trt-field button {
+	cursor: pointer;
+	padding: 6px 10px;
+	border-radius: 4px;
+	border: 1px solid #334155;
+}
+
+.gjs-trt-field button:hover {
+	background: #2563eb;
+	border-color: #2563eb;
 }
 
 .gjs-radio-item input:checked + .gjs-radio-item-label {
