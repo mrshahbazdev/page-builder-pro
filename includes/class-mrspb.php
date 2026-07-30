@@ -112,11 +112,14 @@ class MRSPB {
 		if ( ! is_dir( $dir ) ) {
 			return $files;
 		}
+		WP_Filesystem();
+		global $wp_filesystem;
 		$iterator = new DirectoryIterator( $dir );
 		foreach ( $iterator as $file ) {
 			if ( $file->isFile() && $file->getExtension() === 'json' ) {
 				$slug = sanitize_file_name( $file->getBasename( '.json' ) );
-				$json = json_decode( file_get_contents( $file->getPathname() ), true );
+				$contents = $wp_filesystem->get_contents( $file->getPathname() );
+				$json = $contents ? json_decode( $contents, true ) : array();
 				$name = ! empty( $json['name'] ) ? $json['name'] : $slug;
 				$files[] = array(
 					'slug' => $slug,
@@ -141,7 +144,10 @@ class MRSPB {
 		if ( ! file_exists( $path ) ) {
 			wp_send_json_error( 'Template not found' );
 		}
-		$json = json_decode( file_get_contents( $path ), true );
+		WP_Filesystem();
+		global $wp_filesystem;
+		$contents = $wp_filesystem->get_contents( $path );
+		$json = $contents ? json_decode( $contents, true ) : array();
 		if ( ! is_array( $json ) || ! isset( $json['html'] ) ) {
 			wp_send_json_error( 'Invalid template' );
 		}
