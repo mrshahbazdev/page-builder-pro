@@ -5,10 +5,15 @@ Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://
 ## Features
 
 - Visual drag-and-drop editor with sections, rows, columns and widgets
-- Built-in blocks: Heading, Text, Image, Button, Spacer, Divider, Video, Map, Shortcode
+- Built-in blocks: Heading, Text, Image, Button, Spacer, Divider, Video, Map, **Carousel**, Shortcode
 - Layer / component navigator
 - Visual Style Manager (Typography, Layout, Decorations)
 - Responsive device preview: Desktop, Tablet, Mobile
+- **WordPress Media Library** integration for images
+- **AOS scroll animations** for any element
+- **Swiper carousel/slider** block
+- **Template Export/Import** as JSON
+- **Global styles**: colors, body and heading fonts
 - One-click Save and live Preview
 - Clean frontend output with per-page generated CSS
 - Role-based access control
@@ -17,22 +22,25 @@ Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://
 
 1. Install and activate **Page Builder Pro**.
 2. Go to `Pages > All Pages` and click **Edit with PBP**.
-3. Drag blocks, edit content, style elements and switch device views.
+3. Drag blocks, edit content, style elements, set animations and switch device views.
 4. Click **Save** then **Preview**.
 
 ## Screenshots
 
-### Visual builder with hero section
-![Builder Hero](screenshots/builder-hero.png)
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
 
-### Style Manager
-![Style Manager](screenshots/builder-style-selected.png)
+### Visual builder with animations
+![Builder Animations](screenshots/builder-anim.png)
 
-### Mobile responsive preview
-![Mobile Preview](screenshots/builder-mobile.png)
+### Frontend output with carousel
+![Frontend](screenshots/frontend-anim.png)
 
-### Frontend output
-![Frontend Hero](screenshots/frontend-hero.png)
+### Templates export/import
+![Templates](screenshots/templates.png)
+
+### Settings
+![Settings](screenshots/settings.png)
 
 ## License
 
