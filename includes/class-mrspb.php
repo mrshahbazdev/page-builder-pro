@@ -12,6 +12,7 @@ class MRSPB {
 		add_action( 'wp_ajax_mrspb_save', array( __CLASS__, 'ajax_save' ) );
 		add_action( 'wp_ajax_mrspb_load', array( __CLASS__, 'ajax_load' ) );
 		add_action( 'wp_ajax_mrspb_get_media', array( __CLASS__, 'ajax_get_media' ) );
+		add_action( 'wp_ajax_mrspb_get_template', array( __CLASS__, 'ajax_get_template' ) );
 		add_action( 'admin_post_mrspb_export', array( __CLASS__, 'handle_export' ) );
 		add_action( 'admin_post_mrspb_import', array( __CLASS__, 'handle_import' ) );
 		add_filter( 'the_content', array( __CLASS__, 'frontend_render' ), 999 );
@@ -19,6 +20,7 @@ class MRSPB {
 		add_filter( 'post_row_actions', array( __CLASS__, 'row_actions' ), 10, 2 );
 		add_action( 'admin_bar_menu', array( __CLASS__, 'admin_bar_link' ), 999 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'frontend_assets' ) );
+		add_action( 'wp_ajax_mrspb_template_list', array( __CLASS__, 'ajax_template_list' ) );
 	}
 
 	public static function activate() {
@@ -89,6 +91,8 @@ class MRSPB {
 		wp_enqueue_script( 'grapesjs', MRSPB_URL . 'assets/vendor/grapesjs/grapes.min.js', array(), '0.22.2', true );
 		wp_enqueue_style( 'mrspb-admin', MRSPB_URL . 'assets/css/admin.css', array( 'grapesjs' ), MRSPB_VERSION );
 		wp_enqueue_script( 'mrspb-admin', MRSPB_URL . 'assets/js/admin.js', array( 'grapesjs' ), MRSPB_VERSION, true );
+
+		$templates = self::get_templates_list();
 		wp_localize_script(
 			'mrspb-admin',
 			'mrspbData',
@@ -97,8 +101,59 @@ class MRSPB {
 				'nonce'   => wp_create_nonce( 'mrspb_nonce' ),
 				'pluginUrl' => MRSPB_URL,
 				'postId'  => isset( $_GET['post'] ) ? intval( $_GET['post'] ) : 0,
+				'templates' => $templates,
 			)
 		);
+	}
+
+	public static function get_templates_list() {
+		$dir   = MRSPB_DIR . 'assets/templates/';
+		$files = array();
+		if ( ! is_dir( $dir ) ) {
+			return $files;
+		}
+		$iterator = new DirectoryIterator( $dir );
+		foreach ( $iterator as $file ) {
+			if ( $file->isFile() && $file->getExtension() === 'json' ) {
+				$slug = sanitize_file_name( $file->getBasename( '.json' ) );
+				$json = json_decode( file_get_contents( $file->getPathname() ), true );
+				$name = ! empty( $json['name'] ) ? $json['name'] : $slug;
+				$files[] = array(
+					'slug' => $slug,
+					'name' => $name,
+					'url'  => MRSPB_URL . 'assets/templates/' . $file->getBasename(),
+				);
+			}
+		}
+		return $files;
+	}
+
+	public static function ajax_get_template() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		if ( ! current_user_can( self::get_capability() ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		$slug = isset( $_GET['slug'] ) ? sanitize_file_name( wp_unslash( $_GET['slug'] ) ) : '';
+		if ( ! $slug ) {
+			wp_send_json_error( 'Missing slug' );
+		}
+		$path = MRSPB_DIR . 'assets/templates/' . $slug . '.json';
+		if ( ! file_exists( $path ) ) {
+			wp_send_json_error( 'Template not found' );
+		}
+		$json = json_decode( file_get_contents( $path ), true );
+		if ( ! is_array( $json ) || ! isset( $json['html'] ) ) {
+			wp_send_json_error( 'Invalid template' );
+		}
+		wp_send_json_success( $json );
+	}
+
+	public static function ajax_template_list() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		if ( ! current_user_can( self::get_capability() ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		wp_send_json_success( self::get_templates_list() );
 	}
 
 	public static function render_dashboard() {
@@ -118,6 +173,11 @@ class MRSPB {
 					<h2><?php esc_html_e( 'Templates', 'page-builder-pro' ); ?></h2>
 					<p><?php esc_html_e( 'Export or import full page layouts as JSON.', 'page-builder-pro' ); ?></p>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=page-builder-pro-templates' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Manage Templates', 'page-builder-pro' ); ?></a>
+				</div>
+				<div class="mrspb-card">
+					<h2><?php esc_html_e( 'Pre-Made Templates', 'page-builder-pro' ); ?></h2>
+					<p><?php esc_html_e( 'Hero, Pricing and About layouts are available in the builder.', 'page-builder-pro' ); ?></p>
+					<a href="<?php echo esc_url( admin_url( 'admin.php?page=page-builder-pro-builder&post=2' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Open Builder', 'page-builder-pro' ); ?></a>
 				</div>
 				<div class="mrspb-card">
 					<h2><?php esc_html_e( 'All Pages', 'page-builder-pro' ); ?></h2>
@@ -204,10 +264,20 @@ class MRSPB {
 			wp_die( esc_html__( 'You do not have permission.', 'page-builder-pro' ) );
 		}
 		$posts = get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'numberposts' => 100 ) );
+		$prebuilt = self::get_templates_list();
 		?>
 		<div class="wrap mrspb-wrap">
 			<h1><?php esc_html_e( 'Templates', 'page-builder-pro' ); ?></h1>
 			<div class="mrspb-dashboard">
+				<div class="mrspb-card">
+					<h2><?php esc_html_e( 'Pre-Made Templates', 'page-builder-pro' ); ?></h2>
+					<ul>
+						<?php foreach ( $prebuilt as $tpl ) : ?>
+							<li><?php echo esc_html( $tpl['name'] ); ?> <code><?php echo esc_html( $tpl['slug'] ); ?></code></li>
+						<?php endforeach; ?>
+					</ul>
+					<p><?php esc_html_e( 'Load these inside the builder from the Templates dropdown.', 'page-builder-pro' ); ?></p>
+				</div>
 				<div class="mrspb-card">
 					<h2><?php esc_html_e( 'Export Layout', 'page-builder-pro' ); ?></h2>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -297,6 +367,7 @@ class MRSPB {
 			wp_die( esc_html__( 'Page not found.', 'page-builder-pro' ) );
 		}
 		$stored = self::get_stored( $post_id );
+		$templates = self::get_templates_list();
 		?>
 		<div id="mrspb-builder" data-post-id="<?php echo esc_attr( $post_id ); ?>">
 			<div class="mrspb-topbar">
@@ -304,7 +375,21 @@ class MRSPB {
 					<span class="mrspb-logo"><?php esc_html_e( 'Page Builder Pro', 'page-builder-pro' ); ?></span>
 					<span class="mrspb-page-title"><?php echo esc_html( get_the_title( $post_id ) ); ?></span>
 				</div>
+				<div class="mrspb-topbar-center">
+					<button type="button" class="mrspb-btn" id="mrspb-undo" title="Undo"><?php esc_html_e( 'Undo', 'page-builder-pro' ); ?></button>
+					<button type="button" class="mrspb-btn" id="mrspb-redo" title="Redo"><?php esc_html_e( 'Redo', 'page-builder-pro' ); ?></button>
+					<button type="button" class="mrspb-btn" id="mrspb-code" title="Code"><?php esc_html_e( 'Code', 'page-builder-pro' ); ?></button>
+					<button type="button" class="mrspb-btn" id="mrspb-fullscreen" title="Fullscreen"><?php esc_html_e( 'Full', 'page-builder-pro' ); ?></button>
+				</div>
 				<div class="mrspb-topbar-right">
+					<?php if ( ! empty( $templates ) ) : ?>
+					<select id="mrspb-template" class="mrspb-btn">
+						<option value=""><?php esc_html_e( 'Load Template', 'page-builder-pro' ); ?></option>
+						<?php foreach ( $templates as $tpl ) : ?>
+							<option value="<?php echo esc_attr( $tpl['slug'] ); ?>"><?php echo esc_html( $tpl['name'] ); ?></option>
+						<?php endforeach; ?>
+					</select>
+					<?php endif; ?>
 					<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" target="_blank" class="mrspb-btn mrspb-preview"><?php esc_html_e( 'Preview', 'page-builder-pro' ); ?></a>
 					<button type="button" class="mrspb-btn mrspb-save mrspb-primary"><?php esc_html_e( 'Save', 'page-builder-pro' ); ?></button>
 					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . $post->post_type ) ); ?>" class="mrspb-btn mrspb-close"><?php esc_html_e( 'Close', 'page-builder-pro' ); ?></a>
@@ -446,6 +531,7 @@ class MRSPB {
 		if ( $css ) {
 			$out .= '<style>' . wp_strip_all_tags( $css ) . '</style>';
 		}
+		$out .= '<style>.mrspb-content [data-aos]{opacity:1;}</style>';
 		$out .= '<div class="mrspb-content">' . $html . '</div>';
 
 		if ( strpos( $html, 'data-aos' ) !== false ) {
@@ -453,6 +539,9 @@ class MRSPB {
 		}
 		if ( strpos( $html, 'swiper' ) !== false || strpos( $html, 'swiper-wrapper' ) !== false ) {
 			$out .= '<script>document.addEventListener("DOMContentLoaded",function(){if(typeof Swiper!=="undefined"){document.querySelectorAll(".mrspb-swiper").forEach(function(el){new Swiper(el,{loop:true,pagination:{el:".swiper-pagination",clickable:true},navigation:{nextEl:".swiper-button-next",prevEl:".swiper-button-prev"}});});}});</script>';
+		}
+		if ( strpos( $html, 'data-gsap' ) !== false ) {
+			$out .= '<script>document.addEventListener("DOMContentLoaded",function(){if(typeof gsap!=="undefined"&&typeof ScrollTrigger!=="undefined"){gsap.registerPlugin(ScrollTrigger);document.querySelectorAll("[data-gsap]").forEach(function(el){var anim=el.getAttribute("data-gsap");var y=0,x=0,scale=1,rotation=0,opacity=0;var dur=0.8;switch(anim){case"slide-up":y=60;opacity=0;break;case"slide-down":y=-60;opacity=0;break;case"slide-left":x=60;opacity=0;break;case"slide-right":x=-60;opacity=0;break;case"zoom-in":scale=0.8;opacity=0;break;case"zoom-out":scale=1.2;opacity=0;break;case"flip-left":rotation=-90;opacity=0;break;case"bounce":y=60;break;case"fade":opacity=0;break;default:opacity=0;}gsap.fromTo(el,{y:y,x:x,scale:scale,rotation:rotation,opacity:opacity},{y:0,x:0,scale:1,rotation:0,opacity:1,duration:dur,ease:"power2.out",scrollTrigger:{trigger:el,start:"top 85%",toggleActions:"play none none none"}});});}});</script>';
 		}
 		return $out;
 	}
@@ -465,7 +554,7 @@ class MRSPB {
 		$css .= '--mrspb-secondary:' . esc_attr( $colors['secondary'] ?? '#7c3aed' ) . ';';
 		$css .= '--mrspb-dark:' . esc_attr( $colors['dark'] ?? '#0f172a' ) . ';';
 		$css .= '}';
-		$extra = '';
+		$extra  = '@media (max-width:1024px){.mrspb-hide-tablet{display:none !important;}}@media (max-width:768px){.mrspb-hide-mobile{display:none !important;}}@media (min-width:1025px){.mrspb-hide-desktop{display:none !important;}}';
 		$body_font = ! empty( $fonts['body'] ) ? sanitize_text_field( $fonts['body'] ) : '';
 		$heading_font = ! empty( $fonts['heading'] ) ? sanitize_text_field( $fonts['heading'] ) : '';
 		if ( $body_font ) {
@@ -493,6 +582,10 @@ class MRSPB {
 		if ( strpos( $html, 'swiper' ) !== false || strpos( $html, 'swiper-wrapper' ) !== false ) {
 			wp_enqueue_style( 'swiper', MRSPB_URL . 'assets/vendor/swiper/swiper-bundle.min.css', array(), '11.1.14' );
 			wp_enqueue_script( 'swiper', MRSPB_URL . 'assets/vendor/swiper/swiper-bundle.min.js', array(), '11.1.14', true );
+		}
+		if ( strpos( $html, 'data-gsap' ) !== false ) {
+			wp_enqueue_script( 'gsap', MRSPB_URL . 'assets/vendor/gsap/gsap.min.js', array(), '3.12.5', true );
+			wp_enqueue_script( 'gsap-scrolltrigger', MRSPB_URL . 'assets/vendor/gsap/ScrollTrigger.min.js', array( 'gsap' ), '3.12.5', true );
 		}
 	}
 }

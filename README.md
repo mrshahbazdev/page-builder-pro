@@ -1,19 +1,23 @@
 # Page Builder Pro
 
-Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://grapesjs.com/).
+Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://grapesjs.com/) with premium blocks and high-end animations.
 
 ## Features
 
 - Visual drag-and-drop editor with sections, rows, columns and widgets
-- Built-in blocks: Heading, Text, Image, Button, Spacer, Divider, Video, Map, **Carousel**, Shortcode
+- Premium blocks: Hero, Section, Container, Row/Column, Heading, Text, Image, Button, Spacer, Divider, Video, Map, **Carousel**, Feature Box, **Pricing Table**, **Testimonial**, **Counter**, **Progress Bar**, **Tabs**, **Accordion**, Shortcode
 - Layer / component navigator
 - Visual Style Manager (Typography, Layout, Decorations)
 - Responsive device preview: Desktop, Tablet, Mobile
 - **WordPress Media Library** integration for images
 - **AOS scroll animations** for any element
+- **GSAP + ScrollTrigger** high-end animations
 - **Swiper carousel/slider** block
-- **Template Export/Import** as JSON
-- **Global styles**: colors, body and heading fonts
+- Top toolbar with Undo, Redo, Code view and Fullscreen
+- Built-in template library with pre-made layouts
+- Device visibility control (hide on desktop/tablet/mobile)
+- Template Export/Import as JSON
+- Global styles: colors, body and heading fonts
 - One-click Save and live Preview
 - Clean frontend output with per-page generated CSS
 - Role-based access control
@@ -30,14 +34,14 @@ Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://
 ### Dashboard
 ![Dashboard](screenshots/dashboard.png)
 
-### Visual builder with animations
-![Builder Animations](screenshots/builder-anim.png)
+### Visual builder with template library
+![Builder Templates](screenshots/builder-pricing-v3.png)
 
-### Frontend output with carousel
-![Frontend](screenshots/frontend-anim.png)
+### Frontend output with GSAP animations
+![Frontend GSAP](screenshots/frontend-gsap4.png)
 
-### Templates export/import
-![Templates](screenshots/templates.png)
+### Frontend output with pricing table
+![Frontend Pricing](screenshots/frontend-pricing-v3.png)
 
 ### Settings
 ![Settings](screenshots/settings.png)

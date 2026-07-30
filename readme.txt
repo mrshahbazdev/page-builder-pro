@@ -4,22 +4,26 @@ Tags: page builder, drag and drop, visual editor, grapesjs, landing page, animat
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Advanced drag-and-drop page builder for WordPress powered by GrapesJS.
+Advanced drag-and-drop page builder for WordPress powered by GrapesJS with premium blocks and animations.
 
 == Description ==
-Page Builder Pro is a powerful visual page builder for WordPress that uses the advanced open-source GrapesJS editor. Build landing pages, hero sections, feature grids and more with a true drag-and-drop canvas, responsive device preview, layer manager and visual Style Manager.
+Page Builder Pro is a powerful visual page builder for WordPress that uses the advanced open-source GrapesJS editor. Build landing pages, hero sections, pricing tables, feature grids and more with a true drag-and-drop canvas, premium blocks, advanced animations, responsive device preview, layer manager and visual Style Manager.
 
 = Features =
 * Drag-and-drop visual editor (GrapesJS)
 * Sections, containers, row/column layouts
-* Heading, text, image, button, spacer, divider, video, map, carousel and shortcode blocks
+* Premium blocks: hero, section, container, row/column, heading, text, image, button, spacer, divider, video, map, carousel, feature box, pricing table, testimonial, counter, progress bar, tabs, accordion and shortcode
 * WordPress Media Library image picker
 * AOS scroll animations for any element
+* GSAP + ScrollTrigger high-end animations
 * Swiper carousel/slider block
+* Top toolbar with Undo, Redo, Code view and Fullscreen
+* Built-in template library with pre-made layouts
+* Visibility control per device (hide on desktop/tablet/mobile)
 * Visual Style Manager with typography, layout and decoration controls
 * Layer / component navigator
 * Responsive device preview (Desktop, Tablet, Mobile)
@@ -48,6 +52,13 @@ Page Builder Pro is a powerful visual page builder for WordPress that uses the a
 5. Settings
 
 == Changelog ==
+= 1.2.0 =
+* Added GSAP + ScrollTrigger animations.
+* Added premium blocks: pricing table, testimonial, counter, progress bar, tabs, accordion, feature box, hero.
+* Added top toolbar with Undo, Redo, Code view and Fullscreen.
+* Added built-in template library dropdown inside the builder.
+* Added device visibility control and ID/Class traits.
+
 = 1.1.0 =
 * Added WordPress Media Library integration.
 * Added AOS scroll animations.

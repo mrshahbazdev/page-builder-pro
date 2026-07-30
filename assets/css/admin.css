@@ -51,10 +51,25 @@ html, body {
 }
 
 .mrspb-topbar-left,
+.mrspb-topbar-center,
 .mrspb-topbar-right {
 	display: flex;
 	align-items: center;
 	gap: 12px;
+}
+
+.mrspb-topbar-center {
+	flex: 1;
+	justify-content: center;
+}
+
+#mrspb-template {
+	background: #334155;
+	border: 1px solid #475569;
+	color: #e2e8f0;
+	border-radius: 6px;
+	padding: 7px 10px;
+	font-size: 13px;
 }
 
 .mrspb-logo {

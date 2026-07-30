@@ -9,15 +9,35 @@
 
 	const animOptions = [
 		{ value: '', name: 'None' },
-		{ value: 'fade', name: 'Fade' },
-		{ value: 'fade-up', name: 'Fade Up' },
-		{ value: 'fade-down', name: 'Fade Down' },
-		{ value: 'fade-left', name: 'Fade Left' },
-		{ value: 'fade-right', name: 'Fade Right' },
-		{ value: 'zoom-in', name: 'Zoom In' },
-		{ value: 'zoom-out', name: 'Zoom Out' },
-		{ value: 'flip-up', name: 'Flip Up' },
-		{ value: 'flip-left', name: 'Flip Left' }
+		{ value: 'fade', name: 'AOS Fade' },
+		{ value: 'fade-up', name: 'AOS Fade Up' },
+		{ value: 'fade-down', name: 'AOS Fade Down' },
+		{ value: 'fade-left', name: 'AOS Fade Left' },
+		{ value: 'fade-right', name: 'AOS Fade Right' },
+		{ value: 'zoom-in', name: 'AOS Zoom In' },
+		{ value: 'zoom-out', name: 'AOS Zoom Out' },
+		{ value: 'flip-up', name: 'AOS Flip Up' },
+		{ value: 'flip-left', name: 'AOS Flip Left' }
+	];
+
+	const gsapOptions = [
+		{ value: '', name: 'None' },
+		{ value: 'fade', name: 'GSAP Fade' },
+		{ value: 'slide-up', name: 'GSAP Slide Up' },
+		{ value: 'slide-down', name: 'GSAP Slide Down' },
+		{ value: 'slide-left', name: 'GSAP Slide Left' },
+		{ value: 'slide-right', name: 'GSAP Slide Right' },
+		{ value: 'zoom-in', name: 'GSAP Zoom In' },
+		{ value: 'zoom-out', name: 'GSAP Zoom Out' },
+		{ value: 'flip-left', name: 'GSAP Flip Left' },
+		{ value: 'bounce', name: 'GSAP Bounce' }
+	];
+
+	const visibilityOptions = [
+		{ value: '', name: 'Show All' },
+		{ value: 'mrspb-hide-desktop', name: 'Hide on Desktop' },
+		{ value: 'mrspb-hide-tablet', name: 'Hide on Tablet' },
+		{ value: 'mrspb-hide-mobile', name: 'Hide on Mobile' }
 	];
 
 	const editor = window.mrspbEditor = grapesjs.init({
@@ -43,8 +63,16 @@
 			blocks: [
 				{ id: 'section', label: 'Section', category: 'Layout', content: { tagName: 'section', classes: ['mrspb-section'], style: { padding: '60px 20px', 'background-color': '#f8fafc' } } },
 				{ id: 'container', label: 'Container', category: 'Layout', content: { tagName: 'div', classes: ['mrspb-container'], style: { 'max-width': '1200px', margin: '0 auto', padding: '20px' } } },
-				{ id: 'row-2', label: '2 Columns', category: 'Layout', content: `<div class="mrspb-row" style="display: flex; gap: 20px;"><div class="mrspb-col" style="flex: 1;"></div><div class="mrspb-col" style="flex: 1;"></div></div>` },
-				{ id: 'row-3', label: '3 Columns', category: 'Layout', content: `<div class="mrspb-row" style="display: flex; gap: 20px;"><div class="mrspb-col" style="flex: 1;"></div><div class="mrspb-col" style="flex: 1;"></div><div class="mrspb-col" style="flex: 1;"></div></div>` },
+				{ id: 'row-2', label: '2 Columns', category: 'Layout', content: `<div class="mrspb-row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"><div class="mrspb-col"></div><div class="mrspb-col"></div></div>` },
+				{ id: 'row-3', label: '3 Columns', category: 'Layout', content: `<div class="mrspb-row" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;"><div class="mrspb-col"></div><div class="mrspb-col"></div><div class="mrspb-col"></div></div>` },
+				{ id: 'hero', label: 'Hero', category: 'Sections', content: { tagName: 'section', classes: ['mrspb-hero'], attributes: { 'data-gsap': 'fade' }, style: { padding: '100px 20px', 'background': 'linear-gradient(135deg,#1e293b 0%,#0f172a 100%)', color: '#fff', 'text-align': 'center' }, components: [{ tagName: 'div', classes: ['mrspb-container'], style: { 'max-width': '800px', margin: '0 auto' }, components: [{ type: 'text', tagName: 'h1', content: 'Build Something Amazing', attributes: { 'data-gsap': 'slide-up' }, style: { 'font-size': '48px', 'margin-bottom': '20px', color: '#fff' } }, { type: 'text', tagName: 'p', content: 'Drag, drop and style every element with Page Builder Pro.', attributes: { 'data-gsap': 'slide-up' }, style: { 'font-size': '18px', 'line-height': '1.6', 'margin-bottom': '30px', opacity: '0.9', color: '#fff' } }, { type: 'link', content: 'Get Started', attributes: { 'data-gsap': 'zoom-in' }, style: { display: 'inline-block', padding: '14px 32px', 'background-color': '#2563eb', color: '#fff', 'border-radius': '6px', 'text-decoration': 'none', 'font-weight': '600' } }] }] } },
+				{ id: 'feature-box', label: 'Feature Box', category: 'Content', content: { tagName: 'div', classes: ['mrspb-feature-box'], style: { padding: '30px', 'background-color': '#fff', 'border-radius': '12px', 'box-shadow': '0 4px 12px rgba(0,0,0,.05)', 'text-align': 'center' }, components: [{ tagName: 'div', content: '⭐', style: { 'font-size': '40px', 'margin-bottom': '15px' } }, { type: 'text', tagName: 'h3', content: 'Feature Title', style: { 'font-size': '22px', 'margin-bottom': '10px' } }, { type: 'text', tagName: 'p', content: 'Describe the value of this feature in a few lines.', style: { color: '#475569' } }] } },
+				{ id: 'pricing-table', label: 'Pricing Table', category: 'Content', content: { tagName: 'section', style: { padding: '60px 20px', 'background-color': '#f8fafc' }, components: [{ tagName: 'div', style: { 'max-width': '1200px', margin: '0 auto', 'text-align': 'center' }, components: [{ type: 'text', tagName: 'h2', content: 'Pricing Plans', style: { 'font-size': '36px', 'margin-bottom': '40px' } }, { tagName: 'div', style: { display: 'grid', 'grid-template-columns': 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }, components: [{ tagName: 'div', style: { width: '100%', 'background-color': '#fff', 'border-radius': '12px', padding: '30px', 'box-shadow': '0 4px 12px rgba(0,0,0,.05)' }, components: [{ type: 'text', tagName: 'h3', content: 'Basic' }, { type: 'text', tagName: 'p', content: '$9/mo', style: { 'font-size': '24px', 'font-weight': '700' } }, { type: 'text', tagName: 'p', content: 'Essential features.' }, { type: 'link', content: 'Choose', style: { display: 'inline-block', padding: '10px 20px', 'background-color': '#2563eb', color: '#fff', 'border-radius': '6px', 'text-decoration': 'none' } }] }, { tagName: 'div', style: { width: '100%', 'background-color': '#fff', 'border-radius': '12px', padding: '30px', 'box-shadow': '0 4px 12px rgba(0,0,0,.05)', border: '2px solid #2563eb' }, components: [{ type: 'text', tagName: 'h3', content: 'Pro' }, { type: 'text', tagName: 'p', content: '$29/mo', style: { 'font-size': '24px', 'font-weight': '700' } }, { type: 'text', tagName: 'p', content: 'Advanced tools.' }, { type: 'link', content: 'Choose', style: { display: 'inline-block', padding: '10px 20px', 'background-color': '#2563eb', color: '#fff', 'border-radius': '6px', 'text-decoration': 'none' } }] }, { tagName: 'div', style: { width: '100%', 'background-color': '#fff', 'border-radius': '12px', padding: '30px', 'box-shadow': '0 4px 12px rgba(0,0,0,.05)' }, components: [{ type: 'text', tagName: 'h3', content: 'Agency' }, { type: 'text', tagName: 'p', content: '$79/mo', style: { 'font-size': '24px', 'font-weight': '700' } }, { type: 'text', tagName: 'p', content: 'White-label support.' }, { type: 'link', content: 'Choose', style: { display: 'inline-block', padding: '10px 20px', 'background-color': '#2563eb', color: '#fff', 'border-radius': '6px', 'text-decoration': 'none' } }] }] }] }] } },
+				{ id: 'testimonial', label: 'Testimonial', category: 'Content', content: { tagName: 'div', classes: ['mrspb-testimonial'], style: { padding: '40px', 'background-color': '#fff', 'border-radius': '12px', 'box-shadow': '0 4px 12px rgba(0,0,0,.05)', 'text-align': 'center' }, components: [{ type: 'text', tagName: 'p', content: '"This page builder completely changed how we launch landing pages."', style: { 'font-size': '20px', 'font-style': 'italic', color: '#334155', 'margin-bottom': '20px' } }, { type: 'text', tagName: 'h4', content: 'Jane Doe', style: { 'font-size': '18px', 'font-weight': '600' } }, { type: 'text', tagName: 'p', content: 'CEO, Example Inc.', style: { color: '#64748b' } }] } },
+				{ id: 'counter', label: 'Counter', category: 'Content', content: { tagName: 'div', classes: ['mrspb-counter'], style: { padding: '40px', 'background-color': '#f1f5f9', 'border-radius': '12px', 'text-align': 'center' }, components: [{ type: 'text', tagName: 'div', content: '1,000+', style: { 'font-size': '48px', 'font-weight': '700', color: '#2563eb' } }, { type: 'text', tagName: 'p', content: 'Happy Customers', style: { color: '#475569' } }] } },
+				{ id: 'progress-bar', label: 'Progress Bar', category: 'Content', content: { tagName: 'div', classes: ['mrspb-progress'], style: { padding: '20px' }, components: [{ type: 'text', tagName: 'p', content: 'Skill Level', style: { 'margin-bottom': '8px' } }, { tagName: 'div', style: { width: '100%', height: '20px', 'background-color': '#e2e8f0', 'border-radius': '10px', overflow: 'hidden' }, components: [{ tagName: 'div', style: { width: '75%', height: '100%', 'background-color': '#2563eb' } }] }] } },
+				{ id: 'tabs', label: 'Tabs', category: 'Content', content: `<div style="max-width:800px;margin:0 auto;"><div style="display:flex;gap:10px;border-bottom:2px solid #e2e8f0;margin-bottom:20px;"><button style="padding:10px 20px;background:#2563eb;color:#fff;border:none;border-radius:6px 6px 0 0;">Tab 1</button><button style="padding:10px 20px;background:#f1f5f9;color:#475569;border:none;border-radius:6px 6px 0 0;">Tab 2</button></div><div style="padding:20px;background:#fff;border-radius:0 0 12px 12px;box-shadow:0 4px 12px rgba(0,0,0,.05);"><h3>Tab 1 Content</h3><p>This is the first tab panel.</p></div></div>` },
+				{ id: 'accordion', label: 'Accordion', category: 'Content', content: `<div style="max-width:800px;margin:0 auto;"><details style="margin-bottom:10px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:15px;"><summary style="font-weight:600;cursor:pointer;">Accordion Item 1</summary><p style="margin-top:10px;color:#475569;">First accordion content.</p></details><details style="margin-bottom:10px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:15px;"><summary style="font-weight:600;cursor:pointer;">Accordion Item 2</summary><p style="margin-top:10px;color:#475569;">Second accordion content.</p></details></div>` },
 				{ id: 'heading', label: 'Heading', category: 'Basic', content: { type: 'text', tagName: 'h2', content: 'Heading', style: { padding: '10px', 'font-size': '32px', color: '#0f172a' } } },
 				{ id: 'text', label: 'Text', category: 'Basic', content: { type: 'text', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', style: { padding: '10px', color: '#334155' } } },
 				{ id: 'image', label: 'Image', category: 'Basic', content: { type: 'image', style: { padding: '10px' } } },
@@ -75,9 +103,14 @@
 		}
 	});
 
+	editor.setComponentsAndStyle = function(html, css) {
+		if ( html ) this.setComponents(html);
+		if ( css ) this.setStyle(css);
+	};
+
 	// WordPress media modal command
 	editor.Commands.add('open-wp-media', {
-		run(ed, sender, options) {
+		run(ed) {
 			const component = ed.getSelected();
 			if ( typeof wp === 'undefined' || ! wp.media ) {
 				alert('WordPress media library not loaded.');
@@ -100,25 +133,22 @@
 		}
 	});
 
-	// Add animation trait to all components
+	function getTraitDefinition() {
+		return [
+			{ type: 'text', name: 'id', label: 'ID' },
+			{ type: 'text', name: 'class', label: 'Classes' },
+			{ type: 'select', name: 'data-aos', label: 'AOS Animation', options: animOptions, changeProp: 1 },
+			{ type: 'number', name: 'data-aos-delay', label: 'AOS Delay (ms)', placeholder: '0' },
+			{ type: 'select', name: 'data-gsap', label: 'GSAP Animation', options: gsapOptions, changeProp: 1 },
+			{ type: 'number', name: 'data-gsap-delay', label: 'GSAP Delay (ms)', placeholder: '0' },
+			{ type: 'select', name: 'data-visibility', label: 'Visibility', options: visibilityOptions, changeProp: 1 }
+		];
+	}
+
 	editor.DomComponents.addType('default', {
 		model: {
 			defaults: {
-				traits: [
-					{
-						type: 'select',
-						name: 'data-aos',
-						label: 'Animation',
-						options: animOptions,
-						changeProp: 1
-					},
-					{
-						type: 'number',
-						name: 'data-aos-delay',
-						label: 'Anim Delay (ms)',
-						placeholder: '0'
-					}
-				]
+				traits: getTraitDefinition()
 			}
 		}
 	});
@@ -130,23 +160,70 @@
 					{ type: 'text', name: 'src', label: 'Source' },
 					{ type: 'text', name: 'alt', label: 'Alt' },
 					{ type: 'text', name: 'title', label: 'Title' },
-					{
-						type: 'button',
-						name: 'wp-media',
-						text: 'Select from WordPress Media',
-						command: 'open-wp-media',
-						full: 1
-					},
-					{ type: 'select', name: 'data-aos', label: 'Animation', options: animOptions, changeProp: 1 },
-					{ type: 'number', name: 'data-aos-delay', label: 'Anim Delay (ms)', placeholder: '0' }
+					{ type: 'text', name: 'id', label: 'ID' },
+					{ type: 'text', name: 'class', label: 'Classes' },
+					{ type: 'button', name: 'wp-media', text: 'Select from WordPress Media', command: 'open-wp-media', full: 1 },
+					{ type: 'select', name: 'data-aos', label: 'AOS Animation', options: animOptions, changeProp: 1 },
+					{ type: 'number', name: 'data-aos-delay', label: 'AOS Delay (ms)', placeholder: '0' },
+					{ type: 'select', name: 'data-gsap', label: 'GSAP Animation', options: gsapOptions, changeProp: 1 },
+					{ type: 'number', name: 'data-gsap-delay', label: 'GSAP Delay (ms)', placeholder: '0' },
+					{ type: 'select', name: 'data-visibility', label: 'Visibility', options: visibilityOptions, changeProp: 1 }
 				]
 			}
 		}
 	});
 
-	// Initialize AOS in builder preview after a short delay
-	editor.on('canvas:drag', () => {
-		if ( typeof AOS !== 'undefined' ) AOS.refresh();
+	// Listen for visibility trait changes to add/remove classes
+	editor.on('component:update', (model) => {
+		const v = model.get('attributes')['data-visibility'];
+		if ( v ) {
+			const cls = model.getClasses();
+			['mrspb-hide-desktop','mrspb-hide-tablet','mrspb-hide-mobile'].forEach(c => {
+				if ( cls.indexOf(c) > -1 ) model.removeClass(c);
+			});
+			if ( ['mrspb-hide-desktop','mrspb-hide-tablet','mrspb-hide-mobile'].indexOf(v) > -1 ) {
+				model.addClass(v);
+			}
+		}
+	});
+
+	// Template loader
+	const tplSelect = document.getElementById('mrspb-template');
+	if ( tplSelect ) {
+		tplSelect.addEventListener('change', (e) => {
+			const slug = e.target.value;
+			if ( ! slug ) return;
+			if ( ! confirm('Replace current canvas with template?') ) { e.target.value = ''; return; }
+			fetch(mrspbData.ajaxUrl + '?action=mrspb_get_template&slug=' + encodeURIComponent(slug) + '&nonce=' + encodeURIComponent(mrspbData.nonce), {
+				method: 'GET'
+			})
+			.then(r => r.json())
+			.then(data => {
+				if ( data.success ) {
+					editor.setComponentsAndStyle(data.data.html || '', data.data.css || '');
+				}
+				else { alert('Template load failed.'); }
+				e.target.value = '';
+			})
+			.catch(() => { alert('Template load failed.'); e.target.value = ''; });
+		});
+	}
+
+	// Top toolbar buttons
+	document.getElementById('mrspb-undo')?.addEventListener('click', () => editor.UndoManager.undo());
+	document.getElementById('mrspb-redo')?.addEventListener('click', () => editor.UndoManager.redo());
+	document.getElementById('mrspb-code')?.addEventListener('click', () => {
+		let html = editor.getHtml();
+		let css = editor.getCss();
+		const win = window.open('', '_blank', 'width=800,height=600');
+		win.document.write('<textarea style="width:100%;height:90%;">' + html + '\n<style>' + css + '</style></textarea>');
+	});
+	document.getElementById('mrspb-fullscreen')?.addEventListener('click', () => {
+		if ( ! document.fullscreenElement ) {
+			document.documentElement.requestFullscreen();
+		} else {
+			document.exitFullscreen();
+		}
 	});
 
 	document.querySelector('.mrspb-save').addEventListener('click', () => {
