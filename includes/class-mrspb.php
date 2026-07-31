@@ -1101,7 +1101,8 @@ class MRSPB {
 	}
 
 	public static function get_frontend_base_css() {
-		$css  = '.mrspb-content{box-sizing:border-box;}';
+		$css  = ':root{--mrspb-spacer:8px;}';
+		$css .= '.mrspb-content{box-sizing:border-box;}';
 		$css .= '.mrspb-content *{box-sizing:inherit;}';
 		$css .= '.mrspb-form{margin:0;}';
 		$css .= '.mrspb-form input,.mrspb-form textarea,.mrspb-form select,.mrspb-form button{font-family:inherit;}';
@@ -1140,6 +1141,43 @@ class MRSPB {
 		$css .= '.mrspb-pie-chart .mrspb-pie-bg{stroke:#e2e8f0;}';
 		$css .= '.mrspb-pie-chart .mrspb-pie{stroke:#2563eb;stroke-linecap:round;}';
 		$css .= '.mrspb-post-card img{height:180px;object-fit:cover;}';
+		$css .= '.mrspb-counter{font-size:48px;font-weight:700;color:#2563eb;text-align:center;}';
+		$css .= '.mrspb-tabs [data-tab],.mrspb-tabs-buttons [data-tab]{padding:10px 20px;background:#f1f5f9;color:#475569;border:none;border-radius:6px 6px 0 0;cursor:pointer;}';
+		$css .= '.mrspb-tabs [data-tab].active,.mrspb-tabs-buttons [data-tab].active{background:#2563eb;color:#fff;}';
+		$css .= '[data-tab-panel]{display:none;}';
+		$css .= '[data-tab-panel].active{display:block;}';
+		$css .= '.mrspb-accordion-item{border:1px solid #e2e8f0;border-radius:8px;margin-bottom:10px;overflow:hidden;}';
+		$css .= '.mrspb-accordion-header{padding:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff;}';
+		$css .= '.mrspb-accordion-content{padding:0 15px 15px;color:#475569;background:#fff;max-height:0;overflow:hidden;transition:max-height .3s ease;}';
+		$css .= '.mrspb-accordion-item.open .mrspb-accordion-content{max-height:500px;}';
+		$css .= '.mrspb-grid{display:grid;gap:var(--grid-gap,24px);}';
+		$css .= '.mrspb-grid:not([data-columns]),.mrspb-grid[data-columns="1"]{grid-template-columns:1fr;}';
+		$css .= '.mrspb-grid[data-columns="2"]{grid-template-columns:repeat(2,1fr);}';
+		$css .= '.mrspb-grid[data-columns="3"]{grid-template-columns:repeat(3,1fr);}';
+		$css .= '.mrspb-grid[data-columns="4"]{grid-template-columns:repeat(4,1fr);}';
+		$css .= '.mrspb-grid[data-columns="5"]{grid-template-columns:repeat(5,1fr);}';
+		$css .= '.mrspb-grid[data-columns="6"]{grid-template-columns:repeat(6,1fr);}';
+		$css .= '.mrspb-flex{display:flex;gap:var(--flex-gap,24px);}';
+		$css .= '.mrspb-flex[data-wrap="wrap"]{flex-wrap:wrap;}';
+		$css .= '.mrspb-flex[data-align="center"]{align-items:center;}';
+		$css .= '.mrspb-flex[data-justify="center"]{justify-content:center;}';
+		$css .= '.mrspb-flex[data-justify="between"]{justify-content:space-between;}';
+		$css .= '.mrspb-flex > *{flex:1;}';
+		$css .= '.mrspb-flex[data-fit] > *{flex:0 0 auto;}';
+		$css .= '.mrspb-container{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;}';
+		$css .= '.mrspb-section{position:relative;padding:80px 0;}';
+		$css .= '.mrspb-text-center{text-align:center;}';
+		$css .= '.mrspb-text-left{text-align:left;}';
+		$css .= '.mrspb-text-right{text-align:right;}';
+		$css .= '.mrspb-p-0{padding:0;}.mrspb-p-1{padding:8px;}.mrspb-p-2{padding:16px;}.mrspb-p-3{padding:24px;}.mrspb-p-4{padding:32px;}.mrspb-p-5{padding:48px;}.mrspb-p-6{padding:64px;}';
+		$css .= '.mrspb-m-0{margin:0;}.mrspb-m-1{margin:8px;}.mrspb-m-2{margin:16px;}.mrspb-m-3{margin:24px;}.mrspb-m-4{margin:32px;}.mrspb-m-5{margin:48px;}.mrspb-m-6{margin:64px;}';
+		$css .= '.mrspb-rounded{border-radius:8px;}.mrspb-rounded-lg{border-radius:16px;}.mrspb-rounded-xl{border-radius:24px;}.mrspb-shadow{box-shadow:0 4px 12px rgba(0,0,0,.05);}.mrspb-shadow-lg{box-shadow:0 10px 30px rgba(0,0,0,.1);}';
+		$css .= '.mrspb-hover-lift{transition:transform .3s ease,box-shadow .3s ease;}.mrspb-hover-lift:hover{transform:translateY(-6px);box-shadow:0 12px 24px rgba(0,0,0,.12);}';
+		$css .= '.mrspb-hover-scale{transition:transform .3s ease;}.mrspb-hover-scale:hover{transform:scale(1.03);}';
+		$css .= '.mrspb-sticky{position:sticky;top:0;z-index:9997;}';
+		$css .= '.mrspb-scroll-progress{position:fixed;top:0;left:0;height:4px;background:var(--mrspb-primary,#2563eb);width:0%;z-index:10001;transition:width .1s linear;}';
+		$css .= '@media (max-width:1024px){.mrspb-grid[data-columns]:not([data-columns="1"]){grid-template-columns:repeat(2,1fr);}}';
+		$css .= '@media (max-width:768px){.mrspb-grid[data-columns]{grid-template-columns:1fr;}.mrspb-flex{flex-direction:column;}}';
 		return $css;
 	}
 

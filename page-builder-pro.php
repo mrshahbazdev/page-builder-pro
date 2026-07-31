@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Page Builder Pro
  * Description: Advanced drag-and-drop page builder for WordPress with live preview, templates, responsive controls and role-based access.
- * Version: 1.4.0
+ * Version: 1.5.0
  * Author: mrshahbazdev
  * Author URI: https://github.com/mrshahbazdev
  * License: GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MRSPB_VERSION', '1.4.0' );
+define( 'MRSPB_VERSION', '1.5.0' );
 define( 'MRSPB_FILE', __FILE__ );
 define( 'MRSPB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MRSPB_URL', plugin_dir_url( __FILE__ ) );

@@ -5,7 +5,7 @@ Tags: page builder, landing page, visual editor, drag and drop, animations
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ Page Builder Pro is a powerful visual page builder for WordPress that uses the o
 * Premium blocks: hero, feature box, pricing table, testimonial, counter, progress bar, team member, FAQ, call-to-action, newsletter, cookie banner
 * Basic blocks: heading, text, image, button, spacer, divider, SVG icon
 * Media blocks: video embed, map, Swiper carousel, Lottie animation, video background
-* Interactive blocks: tabs, accordion, countdown timer, contact form, search form, star rating
+* Interactive blocks: tabs (working JS), accordion (working JS), countdown timer, contact form, search form, star rating
 * Advanced blocks: popup/modal, before/after slider, typewriter, particle background, masonry gallery, timeline, pie chart, pricing toggle, post grid, floating bar, social share
 * Dynamic blocks: post title, post excerpt, featured image, post grid shortcode
 * WordPress Media Library image picker
@@ -31,6 +31,10 @@ Page Builder Pro is a powerful visual page builder for WordPress that uses the o
 * Dark/Light builder theme toggle
 * Top toolbar with Undo, Redo, Code view, Fullscreen, Sections, Page Settings and Theme toggle
 * 13+ pre-made template kit (SaaS, agency, portfolio, restaurant, webinar, e-commerce, fitness, real-estate, app landing, photography and more)
+* Smart CSS grid/flex framework with spacing scale, border, shadow and hover utility classes
+* Advanced Style Manager with Layout, Grid, Typography, Decorations and Extra sectors
+* Color palette in builder color picker
+* Scroll progress, parallax, sticky header, animated counters and video background controls
 * Template export/import as JSON
 * Role-based access control
 * Form submissions with email notifications
@@ -69,6 +73,13 @@ Yes. Use the Templates page to export any built page as JSON or import a layout 
 5. Settings
 
 == Changelog ==
+
+= 1.5.0 =
+* Added smart CSS grid/flex section framework with responsive breakpoints, spacing scale, shadow and hover utility classes.
+* Added working JS for tabs, accordion, scroll progress, parallax, sticky headers, animated counters and video backgrounds.
+* Added advanced Style Manager sectors (Layout, Grid, Typography, Decorations, Extra) and builder color palette.
+* Added Stats Row, Steps, Client Logos, Blog Preview and Footer pre-built section blocks.
+* Updated grid blocks (2/3/4 columns and Flex Row) to use the new framework classes.
 
 = 1.4.0 =
 * Added advanced blocks: popup/modal, before/after slider, typewriter text, particle background, masonry gallery, timeline, pie chart, pricing toggle, post grid shortcode, floating bar, social share and video background.

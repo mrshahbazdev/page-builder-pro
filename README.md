@@ -8,16 +8,20 @@ Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://
 - Premium blocks: Hero, Feature Box, Pricing Table, Testimonial, Counter, Progress Bar, Team Member, FAQ, Call-to-Action, Newsletter, Cookie Banner
 - Basic blocks: Heading, Text, Image, Button, Spacer, Divider, SVG Icon
 - Media blocks: Video Embed, Map, Swiper Carousel, Lottie Animation, Video Background
-- Interactive blocks: Tabs, Accordion, Countdown, Contact Form, Search Form, Star Rating
+- Interactive blocks: Tabs (working JS), Accordion (working JS), Countdown, Contact Form, Search Form, Star Rating
 - Advanced blocks: Popup/Modal, Before/After Slider, Typewriter Text, Particle Background, Masonry Gallery, Timeline, Pie Chart, Pricing Toggle, Post Grid (shortcode), Floating Bar, Social Share
 - Dynamic blocks: Post Title, Post Excerpt, Featured Image, Post Grid
 - Layer / component navigator
-- Visual Style Manager (Typography, Layout, Decorations)
+- Visual Style Manager with Layout, Grid, Typography, Decorations and Extra sectors
+- Color palette in builder color picker
+- Smart CSS grid/flex framework: 1-6 column grids, flex rows, spacing scale, shadows, borders, hover utilities
+- Scroll progress, parallax, sticky header, animated counters and video background controls
 - Responsive device preview: Desktop, Tablet, Mobile
 - WordPress Media Library integration for images
 - AOS scroll animations and GSAP + ScrollTrigger high-end animations
 - Top toolbar with Undo, Redo, Code view, Fullscreen, Global Sections, Page Settings, Dark/Light toggle
 - 13+ pre-made template kit (SaaS, agency, portfolio, restaurant, webinar, e-commerce, fitness, real-estate, app landing, photography)
+- Pre-built sections: Stats Row, Steps, Client Logos, Blog Preview, Footer
 - Device visibility control (hide on desktop/tablet/mobile)
 - Page settings: per-page custom CSS, custom JS, body classes, page title override
 - Global sections library: save, insert and reuse sections across pages
