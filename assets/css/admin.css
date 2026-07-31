@@ -304,3 +304,178 @@ html, body {
 .gjs-mdl-btn-close {
 	color: #94a3b8;
 }
+
+/* Custom modals */
+.mrspb-modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	background: rgba(2, 6, 23, .8);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.mrspb-modal-box {
+	background: #1e293b;
+	border: 1px solid #334155;
+	border-radius: 12px;
+	max-width: 700px;
+	width: 100%;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 20px 50px rgba(0,0,0,.4);
+}
+
+.mrspb-modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 20px;
+	border-bottom: 1px solid #334155;
+}
+
+.mrspb-modal-header h2 {
+	margin: 0;
+	color: #f8fafc;
+	font-size: 18px;
+}
+
+.mrspb-modal-close {
+	background: none;
+	border: none;
+	color: #94a3b8;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+.mrspb-modal-body {
+	padding: 20px;
+	overflow-y: auto;
+	color: #e2e8f0;
+}
+
+.mrspb-modal-body label {
+	display: block;
+	margin: 12px 0 6px;
+	font-weight: 500;
+	color: #cbd5e1;
+}
+
+.mrspb-modal-body input,
+.mrspb-modal-body textarea,
+.mrspb-modal-body select {
+	width: 100%;
+	padding: 10px;
+	background: #0f172a;
+	border: 1px solid #334155;
+	border-radius: 6px;
+	color: #f8fafc;
+	font-size: 14px;
+}
+
+.mrspb-modal-body textarea {
+	min-height: 120px;
+	font-family: monospace;
+}
+
+.mrspb-modal-footer {
+	padding: 16px 20px;
+	border-top: 1px solid #334155;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.mrspb-section-list {
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.mrspb-section-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px;
+	background: #0f172a;
+	border: 1px solid #334155;
+	border-radius: 8px;
+	margin-bottom: 8px;
+}
+
+.mrspb-section-item button {
+	background: #2563eb;
+	color: #fff;
+	border: none;
+	padding: 6px 12px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+/* Light theme override */
+.mrspb-light #mrspb-builder,
+.mrspb-light .gjs-one-bg,
+.mrspb-light .gjs-pn-commands,
+.mrspb-light .gjs-pn-devices-c,
+.mrspb-light .gjs-pn-options,
+.mrspb-light .gjs-pn-views,
+.mrspb-light .gjs-pn-views-container,
+.mrspb-light .gjs-mdl-dialog,
+.mrspb-light .gjs-mdl-header,
+.mrspb-light .gjs-off-prv,
+.mrspb-light .gjs-block,
+.mrspb-light .gjs-block-category,
+.mrspb-light .mrspb-topbar,
+.mrspb-light .mrspb-modal-box {
+	background: #fff;
+	color: #0f172a;
+	border-color: #e2e8f0;
+}
+
+.mrspb-light .gjs-title,
+.mrspb-light .gjs-sm-sector .gjs-sm-title,
+.mrspb-light .gjs-layer-name,
+.mrspb-light .gjs-trt-trait,
+.mrspb-light .gjs-two-color,
+.mrspb-light .gjs-four-color,
+.mrspb-light .gjs-field,
+.mrspb-light .gjs-sm-field select,
+.mrspb-light .gjs-sm-field input,
+.mrspb-light .gjs-clm-select select,
+.mrspb-light .gjs-trt-field input,
+.mrspb-light .gjs-trt-field select,
+.mrspb-light .gjs-trt-field textarea,
+.mrspb-light .gjs-pn-btn,
+.mrspb-light .mrspb-modal-body,
+.mrspb-light .mrspb-modal-body label,
+.mrspb-light .mrspb-modal-header h2 {
+	color: #0f172a;
+}
+
+.mrspb-light .mrspb-btn,
+.mrspb-light .gjs-field,
+.mrspb-light .gjs-sm-field input,
+.mrspb-light .gjs-clm-select select,
+.mrspb-light .gjs-trt-field input,
+.mrspb-light .gjs-trt-field select,
+.mrspb-light .gjs-trt-field textarea,
+.mrspb-light .mrspb-modal-body input,
+.mrspb-light .mrspb-modal-body textarea,
+.mrspb-light .mrspb-section-item {
+	background: #f8fafc;
+	border-color: #e2e8f0;
+	color: #0f172a;
+}
+
+.mrspb-light .gjs-block:hover,
+.mrspb-light .gjs-pn-btn:hover,
+.mrspb-light .gjs-pn-btn.gjs-pn-active {
+	background: #f1f5f9;
+}
+
+.mrspb-light .gjs-block-c svg,
+.mrspb-light .gjs-pn-btn {
+	color: #475569;
+	fill: #475569;
+}

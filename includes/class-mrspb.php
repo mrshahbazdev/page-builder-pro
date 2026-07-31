@@ -23,10 +23,37 @@ class MRSPB {
 		add_action( 'wp_ajax_mrspb_template_list', array( __CLASS__, 'ajax_template_list' ) );
 		add_action( 'wp_ajax_mrspb_submit_form', array( __CLASS__, 'ajax_submit_form' ) );
 		add_action( 'wp_ajax_nopriv_mrspb_submit_form', array( __CLASS__, 'ajax_submit_form' ) );
+		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
+		add_action( 'wp_ajax_mrspb_save_section', array( __CLASS__, 'ajax_save_section' ) );
+		add_action( 'wp_ajax_mrspb_get_sections', array( __CLASS__, 'ajax_get_sections' ) );
+		add_action( 'wp_ajax_mrspb_delete_section', array( __CLASS__, 'ajax_delete_section' ) );
+		add_action( 'wp_ajax_mrspb_save_page_settings', array( __CLASS__, 'ajax_save_page_settings' ) );
+		add_action( 'wp_ajax_mrspb_load_page_settings', array( __CLASS__, 'ajax_load_page_settings' ) );
+		add_shortcode( 'mrspb_posts', array( __CLASS__, 'shortcode_posts' ) );
+		add_filter( 'body_class', array( __CLASS__, 'body_class' ) );
+		add_filter( 'document_title_parts', array( __CLASS__, 'document_title_parts' ) );
 	}
 
 	public static function activate() {
-		// Nothing yet.
+		self::register_post_types();
+		flush_rewrite_rules();
+	}
+
+	public static function register_post_types() {
+		register_post_type(
+			'mrspb_section',
+			array(
+				'labels'       => array(
+					'name'          => __( 'Global Sections', 'page-builder-pro' ),
+					'singular_name' => __( 'Global Section', 'page-builder-pro' ),
+				),
+				'public'       => false,
+				'show_ui'      => false,
+				'show_in_menu' => false,
+				'supports'     => array( 'title' ),
+				'rewrite'      => false,
+			)
+		);
 	}
 
 	public static function admin_menu() {
@@ -96,15 +123,19 @@ class MRSPB {
 		wp_enqueue_script( 'mrspb-admin', MRSPB_URL . 'assets/js/admin.js', array( 'grapesjs', 'lottie' ), MRSPB_VERSION, true );
 
 		$templates = self::get_templates_list();
+		$post_id = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+		$post_id = $post_id ? $post_id : 0;
+		$page_settings = $post_id ? self::get_page_settings( $post_id ) : array();
 		wp_localize_script(
 			'mrspb-admin',
 			'mrspbData',
 			array(
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'mrspb_nonce' ),
-				'pluginUrl' => MRSPB_URL,
-				'postId'  => isset( $_GET['post'] ) ? intval( $_GET['post'] ) : 0,
-				'templates' => $templates,
+				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+				'nonce'         => wp_create_nonce( 'mrspb_nonce' ),
+				'pluginUrl'     => MRSPB_URL,
+				'postId'        => $post_id,
+				'templates'     => $templates,
+				'pageSettings'  => $page_settings,
 			)
 		);
 	}
@@ -367,7 +398,7 @@ class MRSPB {
 		if ( ! current_user_can( self::get_capability() ) ) {
 			wp_die( esc_html__( 'You do not have permission.', 'page-builder-pro' ) );
 		}
-		$post_id = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : 0;
+		$post_id = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 		if ( ! $post_id ) {
 			wp_die( esc_html__( 'Select a page to edit.', 'page-builder-pro' ) );
 		}
@@ -389,6 +420,9 @@ class MRSPB {
 					<button type="button" class="mrspb-btn" id="mrspb-redo" title="Redo"><?php esc_html_e( 'Redo', 'page-builder-pro' ); ?></button>
 					<button type="button" class="mrspb-btn" id="mrspb-code" title="Code"><?php esc_html_e( 'Code', 'page-builder-pro' ); ?></button>
 					<button type="button" class="mrspb-btn" id="mrspb-fullscreen" title="Fullscreen"><?php esc_html_e( 'Full', 'page-builder-pro' ); ?></button>
+					<button type="button" class="mrspb-btn" id="mrspb-sections" title="Global Sections"><?php esc_html_e( 'Sections', 'page-builder-pro' ); ?></button>
+					<button type="button" class="mrspb-btn" id="mrspb-page-settings" title="Page Settings"><?php esc_html_e( 'Page Settings', 'page-builder-pro' ); ?></button>
+					<button type="button" class="mrspb-btn" id="mrspb-theme-toggle" title="Toggle Dark/Light"><?php esc_html_e( 'Dark', 'page-builder-pro' ); ?></button>
 				</div>
 				<div class="mrspb-topbar-right">
 					<?php if ( ! empty( $templates ) ) : ?>
@@ -405,6 +439,18 @@ class MRSPB {
 				</div>
 			</div>
 			<div id="gjs"></div>
+			<div id="mrspb-modal-overlay" class="mrspb-modal-overlay" style="display:none;">
+				<div id="mrspb-modal" class="mrspb-modal-box">
+					<div class="mrspb-modal-header">
+						<h2 id="mrspb-modal-title"><?php esc_html_e( 'Modal', 'page-builder-pro' ); ?></h2>
+						<button type="button" class="mrspb-modal-close" id="mrspb-modal-close">&times;</button>
+					</div>
+					<div id="mrspb-modal-body" class="mrspb-modal-body"></div>
+					<div class="mrspb-modal-footer">
+						<button type="button" class="mrspb-btn mrspb-primary" id="mrspb-modal-save"><?php esc_html_e( 'Save', 'page-builder-pro' ); ?></button>
+					</div>
+				</div>
+			</div>
 		</div>
 		<script id="mrspb-initial" type="application/json"><?php echo wp_json_encode( $stored ); ?></script>
 		<?php
@@ -488,7 +534,7 @@ class MRSPB {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_send_json_error( 'Permission denied' );
 		}
-		$html = self::sanitize_builder_html( wp_unslash( $_POST['html'] ) );
+		$html = wp_kses( wp_unslash( $_POST['html'] ), self::get_allowed_html() );
 		$css  = sanitize_textarea_field( wp_unslash( $_POST['css'] ) );
 		update_post_meta( $post_id, '_mrspb_html', $html );
 		update_post_meta( $post_id, '_mrspb_css', $css );
@@ -555,6 +601,181 @@ class MRSPB {
 		$body = implode( "\n", $lines );
 		wp_mail( $to, $subject, $body );
 		wp_send_json_success( array( 'message' => __( 'Sent', 'page-builder-pro' ) ) );
+	}
+
+	public static function get_page_settings( $post_id ) {
+		$defaults = array(
+			'page_title' => '',
+			'body_class' => '',
+			'custom_css' => '',
+			'custom_js'  => '',
+		);
+		$meta = get_post_meta( $post_id, '_mrspb_page_settings', true );
+		if ( ! is_array( $meta ) ) {
+			$meta = array();
+		}
+		return wp_parse_args( $meta, $defaults );
+	}
+
+	public static function ajax_save_page_settings() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		$settings = array(
+			'page_title' => isset( $_POST['page_title'] ) ? sanitize_text_field( wp_unslash( $_POST['page_title'] ) ) : '',
+			'body_class' => isset( $_POST['body_class'] ) ? sanitize_text_field( wp_unslash( $_POST['body_class'] ) ) : '',
+			'custom_css' => isset( $_POST['custom_css'] ) ? sanitize_textarea_field( wp_unslash( $_POST['custom_css'] ) ) : '',
+			'custom_js'  => isset( $_POST['custom_js'] ) ? sanitize_textarea_field( wp_unslash( $_POST['custom_js'] ) ) : '',
+		);
+		update_post_meta( $post_id, '_mrspb_page_settings', $settings );
+		wp_send_json_success( array( 'message' => __( 'Saved', 'page-builder-pro' ) ) );
+	}
+
+	public static function ajax_load_page_settings() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		$post_id = isset( $_GET['post_id'] ) ? intval( $_GET['post_id'] ) : 0;
+		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		wp_send_json_success( self::get_page_settings( $post_id ) );
+	}
+
+	public static function ajax_save_section() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		if ( ! current_user_can( self::get_capability() ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		$title = isset( $_POST['title'] ) ? sanitize_text_field( wp_unslash( $_POST['title'] ) ) : '';
+		$html  = isset( $_POST['html'] ) ? wp_kses( wp_unslash( $_POST['html'] ), self::get_allowed_html() ) : '';
+		$css   = isset( $_POST['css'] ) ? sanitize_textarea_field( wp_unslash( $_POST['css'] ) ) : '';
+		$section_id = isset( $_POST['section_id'] ) ? intval( $_POST['section_id'] ) : 0;
+		if ( ! $title ) {
+			wp_send_json_error( 'Title required' );
+		}
+		$data = array(
+			'post_type'   => 'mrspb_section',
+			'post_title'  => $title,
+			'post_status' => 'publish',
+		);
+		if ( $section_id ) {
+			$data['ID'] = $section_id;
+			wp_update_post( $data );
+		} else {
+			$section_id = wp_insert_post( $data );
+		}
+		if ( is_wp_error( $section_id ) ) {
+			wp_send_json_error( $section_id->get_error_message() );
+		}
+		update_post_meta( $section_id, '_mrspb_section_html', $html );
+		update_post_meta( $section_id, '_mrspb_section_css', $css );
+		wp_send_json_success( array( 'id' => $section_id, 'title' => $title ) );
+	}
+
+	public static function ajax_get_sections() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		if ( ! current_user_can( self::get_capability() ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		$sections = get_posts(
+			array(
+				'post_type'      => 'mrspb_section',
+				'posts_per_page' => 100,
+				'post_status'    => 'publish',
+			)
+		);
+		$out = array();
+		foreach ( $sections as $s ) {
+			$out[] = array(
+				'id'    => $s->ID,
+				'title' => $s->post_title,
+				'html'  => get_post_meta( $s->ID, '_mrspb_section_html', true ),
+				'css'   => get_post_meta( $s->ID, '_mrspb_section_css', true ),
+			);
+		}
+		wp_send_json_success( $out );
+	}
+
+	public static function ajax_delete_section() {
+		check_ajax_referer( 'mrspb_nonce', 'nonce' );
+		$section_id = isset( $_POST['section_id'] ) ? intval( $_POST['section_id'] ) : 0;
+		if ( ! $section_id || ! current_user_can( self::get_capability() ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+		wp_delete_post( $section_id, true );
+		wp_send_json_success();
+	}
+
+	public static function shortcode_posts( $atts ) {
+		$atts = shortcode_atts(
+			array(
+				'post_type' => 'post',
+				'count'     => 6,
+				'columns'   => 3,
+			),
+			$atts,
+			'mrspb_posts'
+		);
+		$query = new WP_Query(
+			array(
+				'post_type'      => sanitize_text_field( $atts['post_type'] ),
+				'posts_per_page' => intval( $atts['count'] ),
+			)
+		);
+		if ( ! $query->have_posts() ) {
+			wp_reset_postdata();
+			return '';
+		}
+		$cols = max( 1, min( 4, intval( $atts['columns'] ) ) );
+		$grid = 'repeat(' . $cols . ', 1fr)';
+		$out  = '<div class="mrspb-post-grid" style="display:grid;grid-template-columns:' . $grid . ';gap:24px;">';
+		while ( $query->have_posts() ) {
+			$query->the_post();
+			$thumb = get_the_post_thumbnail_url( get_the_ID(), 'medium' );
+			$out  .= '<article class="mrspb-post-card" style="background:#fff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);overflow:hidden;">';
+			if ( $thumb ) {
+				$out .= '<img src="' . esc_url( $thumb ) . '" alt="" style="width:100%;height:180px;object-fit:cover;">';
+			}
+			$out .= '<div style="padding:20px;"><h3 style="margin:0 0 10px;font-size:18px;"><a href="' . esc_url( get_permalink() ) . '" style="text-decoration:none;color:#0f172a;">' . esc_html( get_the_title() ) . '</a></h3><p style="margin:0;color:#475569;">' . esc_html( wp_trim_words( get_the_excerpt(), 20 ) ) . '</p></div>';
+			$out .= '</article>';
+		}
+		wp_reset_postdata();
+		$out .= '</div>';
+		return $out;
+	}
+
+	public static function body_class( $classes ) {
+		if ( ! is_singular() ) {
+			return $classes;
+		}
+		$post_id = get_queried_object_id();
+		if ( get_post_meta( $post_id, '_mrspb_html', true ) ) {
+			$classes[] = 'mrspb-page';
+		}
+		$settings = self::get_page_settings( $post_id );
+		if ( ! empty( $settings['body_class'] ) ) {
+			$body_classes = explode( ' ', sanitize_text_field( $settings['body_class'] ) );
+			foreach ( $body_classes as $c ) {
+				$c = sanitize_html_class( $c );
+				if ( $c ) {
+					$classes[] = $c;
+				}
+			}
+		}
+		return $classes;
+	}
+
+	public static function document_title_parts( $title ) {
+		if ( ! is_singular() ) {
+			return $title;
+		}
+		$post_id = get_queried_object_id();
+		$settings = self::get_page_settings( $post_id );
+		if ( ! empty( $settings['page_title'] ) ) {
+			$title['title'] = sanitize_text_field( $settings['page_title'] );
+		}
+		return $title;
 	}
 
 	public static function get_allowed_html() {
@@ -726,6 +947,33 @@ class MRSPB {
 			)
 		);
 
+		$media_common = array_merge(
+			$common,
+			array(
+				'src'       => true,
+				'controls'  => true,
+				'autoplay'  => true,
+				'loop'      => true,
+				'muted'     => true,
+				'playsinline' => true,
+				'poster'    => true,
+				'preload'   => true,
+				'width'     => true,
+				'height'    => true,
+			)
+		);
+
+		$allowed['video']  = $media_common;
+		$allowed['audio']  = $media_common;
+		$allowed['source'] = array_merge( $common, array( 'src' => true, 'type' => true, 'media' => true ) );
+		$allowed['track']  = array_merge( $common, array( 'src' => true, 'kind' => true, 'srclang' => true, 'label' => true ) );
+		$allowed['canvas'] = $common;
+		$allowed['dialog'] = $common;
+		$allowed['details'] = $common;
+		$allowed['summary'] = $common;
+		$allowed['meter'] = array_merge( $common, array( 'value' => true, 'min' => true, 'max' => true, 'low' => true, 'high' => true, 'optimum' => true ) );
+		$allowed['progress'] = array_merge( $common, array( 'value' => true, 'max' => true ) );
+
 		return $allowed;
 	}
 
@@ -787,9 +1035,11 @@ class MRSPB {
 		}
 
 		$css = get_post_meta( $post_id, '_mrspb_css', true );
+		$settings = self::get_page_settings( $post_id );
 		wp_register_style( 'mrspb-frontend-base', false, array(), MRSPB_VERSION );
 		wp_enqueue_style( 'mrspb-frontend-base' );
-		wp_add_inline_style( 'mrspb-frontend-base', self::get_global_styles_css() . self::get_frontend_base_css() . ( $css ? wp_strip_all_tags( $css ) : '' ) );
+		$inline_css = self::get_global_styles_css() . self::get_frontend_base_css() . ( $css ? wp_strip_all_tags( $css ) : '' ) . ( ! empty( $settings['custom_css'] ) ? wp_strip_all_tags( $settings['custom_css'] ) : '' );
+		wp_add_inline_style( 'mrspb-frontend-base', $inline_css );
 
 		$deps = array();
 		if ( strpos( $html, 'data-aos' ) !== false ) {
@@ -815,6 +1065,10 @@ class MRSPB {
 
 		wp_register_script( 'mrspb-frontend', MRSPB_URL . 'assets/js/frontend.js', $deps, MRSPB_VERSION, true );
 		wp_enqueue_script( 'mrspb-frontend' );
+		$inline_js = ! empty( $settings['custom_js'] ) ? sanitize_textarea_field( $settings['custom_js'] ) : '';
+		if ( $inline_js ) {
+			wp_add_inline_script( 'mrspb-frontend', $inline_js );
+		}
 		wp_localize_script(
 			'mrspb-frontend',
 			'mrspbData',
@@ -842,6 +1096,7 @@ class MRSPB {
 		}
 		$html = self::replace_dynamic_content( $html );
 		$html = self::inject_form_nonces( $html );
+		$html = do_shortcode( $html );
 		return '<div class="mrspb-content">' . $html . '</div>';
 	}
 
@@ -859,6 +1114,32 @@ class MRSPB {
 		$css .= '.mrspb-cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#1e293b;color:#fff;}';
 		$css .= '.mrspb-cookie-banner button{padding:8px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;}';
 		$css .= '.mrspb-lottie{display:block;margin:0 auto;}';
+		$css .= '.mrspb-modal,.mrspb-modal[open]{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);}';
+		$css .= '.mrspb-modal.mrspb-open,.mrspb-modal[open]{display:flex;}';
+		$css .= '.mrspb-modal-content{background:#fff;padding:30px;border-radius:12px;max-width:600px;width:90%;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.2);}';
+		$css .= '.mrspb-modal-close{position:absolute;top:10px;right:15px;background:none;border:none;font-size:24px;cursor:pointer;}';
+		$css .= '.mrspb-before-after{position:relative;overflow:hidden;user-select:none;}';
+		$css .= '.mrspb-before-after img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}';
+		$css .= '.mrspb-before-after .mrspb-slider{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:3;}';
+		$css .= '.mrspb-before-after .mrspb-handle{position:absolute;top:0;bottom:0;width:4px;background:#fff;transform:translateX(-50%);z-index:2;box-shadow:0 0 10px rgba(0,0,0,.3);}';
+		$css .= '.mrspb-typewriter{font-weight:700;color:#2563eb;}';
+		$css .= '.mrspb-particles{position:absolute;inset:0;pointer-events:none;}';
+		$css .= '.mrspb-video-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;}';
+		$css .= '.mrspb-floating-bar{position:fixed;left:0;right:0;z-index:9998;padding:12px 20px;background:#fff;box-shadow:0 -4px 12px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:center;}';
+		$css .= '.mrspb-floating-bar.top{top:0;}.mrspb-floating-bar.bottom{bottom:0;}';
+		$css .= '.mrspb-social-share{display:flex;gap:10px;flex-wrap:wrap;}';
+		$css .= '.mrspb-social-share button{padding:8px 16px;border:none;border-radius:6px;background:#f1f5f9;color:#334155;cursor:pointer;font-weight:600;}';
+		$css .= '.mrspb-masonry{columns:3 250px;column-gap:16px;}';
+		$css .= '.mrspb-masonry > *{break-inside:avoid;margin-bottom:16px;}';
+		$css .= '.mrspb-timeline{position:relative;padding-left:30px;}';
+		$css .= '.mrspb-timeline::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:2px;background:#e2e8f0;}';
+		$css .= '.mrspb-timeline-item{position:relative;margin-bottom:24px;padding-left:24px;}';
+		$css .= '.mrspb-timeline-item::before{content:"";position:absolute;left:-23px;top:4px;width:14px;height:14px;border-radius:50%;background:#2563eb;}';
+		$css .= '.mrspb-pie-chart{width:120px;height:120px;transform:rotate(-90deg);}';
+		$css .= '.mrspb-pie-chart circle{fill:none;stroke-width:3;}';
+		$css .= '.mrspb-pie-chart .mrspb-pie-bg{stroke:#e2e8f0;}';
+		$css .= '.mrspb-pie-chart .mrspb-pie{stroke:#2563eb;stroke-linecap:round;}';
+		$css .= '.mrspb-post-card img{height:180px;object-fit:cover;}';
 		return $css;
 	}
 

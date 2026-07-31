@@ -89,7 +89,21 @@
 		{ id: 'featured-image', label: 'Featured Image', category: 'Dynamic', content: `<img class="mrspb-dynamic" data-dyn="featured_image" src="${mrspbData.pluginUrl}assets/img/placeholder.png" alt="Featured Image" style="max-width: 100%; border-radius: 12px;">` },
 
 		// WordPress
-		{ id: 'shortcode', label: 'Shortcode', category: 'WordPress', content: { tagName: 'div', classes: ['mrspb-shortcode'], content: '[your_shortcode]', style: { padding: '10px', background: '#f1f5f9', 'border-left': '3px solid #2563eb' } } }
+		{ id: 'shortcode', label: 'Shortcode', category: 'WordPress', content: { tagName: 'div', classes: ['mrspb-shortcode'], content: '[your_shortcode]', style: { padding: '10px', background: '#f1f5f9', 'border-left': '3px solid #2563eb' } } },
+
+		// Advanced
+		{ id: 'popup', label: 'Popup / Modal', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-modal'], attributes: { id: 'modal1' }, style: { display: 'none', position: 'fixed', inset: '0', 'z-index': '10000', 'background-color': 'rgba(0,0,0,.5)', 'align-items': 'center', 'justify-content': 'center' }, components: [{ tagName: 'div', classes: ['mrspb-modal-content'], style: { background: '#fff', padding: '30px', 'border-radius': '12px', 'max-width': '600px', width: '90%', position: 'relative' }, components: [{ tagName: 'button', content: '×', classes: ['mrspb-modal-close'], attributes: { 'data-mrspb-close': 'modal1' }, style: { position: 'absolute', top: '10px', right: '15px', background: 'none', border: 'none', 'font-size': '24px', cursor: 'pointer' } }, { type: 'text', tagName: 'h2', content: 'Popup Title', style: { 'margin-top': '0' } }, { type: 'text', tagName: 'p', content: 'This is a modal popup. Add a button with data-mrspb-open="modal1" to open it.', style: { color: '#475569' } }] }] } },
+		{ id: 'video-bg', label: 'Video Background', category: 'Advanced', content: { tagName: 'section', classes: ['mrspb-section'], style: { position: 'relative', padding: '120px 20px', 'text-align': 'center', color: '#fff', overflow: 'hidden' }, components: [{ tagName: 'video', classes: ['mrspb-video-bg'], attributes: { autoplay: 'autoplay', muted: 'muted', loop: 'loop', playsinline: 'playsinline' }, style: { position: 'absolute', inset: '0', width: '100%', height: '100%', 'object-fit': 'cover', 'z-index': '-1' }, components: [{ tagName: 'source', attributes: { src: '', type: 'video/mp4' } }] }, { tagName: 'div', style: { position: 'relative', 'max-width': '800px', margin: '0 auto', 'z-index': '1' }, components: [{ type: 'text', tagName: 'h1', content: 'Cinematic Hero', style: { 'font-size': '48px' } }] }] } },
+		{ id: 'before-after', label: 'Before / After Slider', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-before-after'], style: { position: 'relative', width: '100%', 'max-width': '600px', height: '300px', overflow: 'hidden', margin: '0 auto' }, components: [{ type: 'image', classes: ['mrspb-before'], style: { position: 'absolute', inset: '0', width: '100%', height: '100%', 'object-fit': 'cover' } }, { tagName: 'div', classes: ['mrspb-after-wrap'], style: { position: 'absolute', inset: '0', width: '50%', overflow: 'hidden' }, components: [{ type: 'image', classes: ['mrspb-after'], style: { position: 'absolute', inset: '0', width: '100%', height: '100%', 'object-fit': 'cover' } }] }, { tagName: 'input', classes: ['mrspb-slider'], attributes: { type: 'range', min: '0', max: '100', value: '50' }, style: { position: 'absolute', inset: '0', width: '100%', height: '100%', opacity: '0', cursor: 'ew-resize', 'z-index': '3' } }, { tagName: 'div', classes: ['mrspb-handle'], style: { position: 'absolute', top: '0', bottom: '0', left: '50%', width: '4px', background: '#fff', transform: 'translateX(-50%)', 'z-index': '2' } }] } },
+		{ id: 'typewriter', label: 'Typewriter Text', category: 'Advanced', content: { type: 'text', tagName: 'span', classes: ['mrspb-typewriter'], attributes: { 'data-typewriter': '["Hello","World"]', 'data-typewriter-speed': '120', 'data-typewriter-pause': '2000' }, content: 'Typewriter', style: { 'font-size': '36px', color: '#2563eb' } } },
+		{ id: 'particles', label: 'Particle Background', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-particles'], attributes: { 'data-color': '#2563eb', 'data-count': '60' }, style: { position: 'absolute', inset: '0', 'pointer-events': 'none', 'z-index': '0' } } },
+		{ id: 'masonry-gallery', label: 'Masonry Gallery', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-masonry'], style: { columns: '3 250px', 'column-gap': '16px' }, components: [{ type: 'image', style: { width: '100%', 'border-radius': '8px', 'margin-bottom': '16px' } }, { type: 'image', style: { width: '100%', 'border-radius': '8px', 'margin-bottom': '16px' } }, { type: 'image', style: { width: '100%', 'border-radius': '8px', 'margin-bottom': '16px' } }] } },
+		{ id: 'timeline', label: 'Timeline', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-timeline'], style: { position: 'relative', 'padding-left': '30px' }, components: [{ tagName: 'div', classes: ['mrspb-timeline-item'], components: [{ type: 'text', tagName: 'h4', content: '2026 - Milestone', style: { 'margin-bottom': '5px' } }, { type: 'text', tagName: 'p', content: 'Describe this milestone.', style: { color: '#475569' } }] }, { tagName: 'div', classes: ['mrspb-timeline-item'], components: [{ type: 'text', tagName: 'h4', content: '2027 - Milestone' }, { type: 'text', tagName: 'p', content: 'Describe this milestone.', style: { color: '#475569' } }] }] } },
+		{ id: 'pie-chart', label: 'Pie Chart', category: 'Advanced', content: { tagName: 'svg', classes: ['mrspb-pie-chart'], attributes: { viewBox: '0 0 36 36' }, components: [{ tagName: 'circle', classes: ['mrspb-pie-bg'], attributes: { cx: '18', cy: '18', r: '15.9' }, style: { fill: 'none', stroke: '#e2e8f0', 'stroke-width': '3' } }, { tagName: 'circle', classes: ['mrspb-pie'], attributes: { cx: '18', cy: '18', r: '15.9', 'data-value': '75', 'data-max': '100' }, style: { fill: 'none', stroke: '#2563eb', 'stroke-width': '3', 'stroke-dasharray': '100 100', 'stroke-dashoffset': '25' } }] } },
+		{ id: 'pricing-toggle', label: 'Pricing Toggle', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-pricing-toggle-wrap'], style: { 'text-align': 'center', margin: '20px 0' }, components: [{ tagName: 'label', style: { display: 'inline-flex', 'align-items': 'center', gap: '10px', cursor: 'pointer', 'font-weight': '600' }, components: [{ tagName: 'span', content: 'Monthly' }, { tagName: 'input', classes: ['mrspb-pricing-toggle'], attributes: { type: 'checkbox' }, style: { width: '40px', height: '20px', appearance: 'none', background: '#2563eb', 'border-radius': '20px', position: 'relative', cursor: 'pointer' } }, { tagName: 'span', content: 'Yearly' }] }] } },
+		{ id: 'post-grid', label: 'Post Grid (Dynamic)', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-post-grid-placeholder'], style: { padding: '30px', background: '#f1f5f9', 'border-radius': '12px', 'text-align': 'center' }, components: [{ type: 'text', tagName: 'p', content: '[mrspb_posts post_type="post" count="6" columns="3"]', style: { 'font-family': 'monospace', color: '#2563eb' } }] } },
+		{ id: 'floating-bar', label: 'Floating Bar', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-floating-bar'], attributes: { 'data-position': 'bottom' }, style: { position: 'fixed', left: '0', right: '0', bottom: '0', 'z-index': '9998', padding: '12px 20px', background: '#fff', 'box-shadow': '0 -4px 12px rgba(0,0,0,.08)', display: 'flex', 'justify-content': 'space-between', 'align-items': 'center' }, components: [{ type: 'text', tagName: 'p', content: 'Limited time offer — act now!', style: { margin: '0', 'font-weight': '600' } }, { type: 'link', content: 'Get Started', style: { padding: '10px 20px', background: '#2563eb', color: '#fff', 'border-radius': '6px', 'text-decoration': 'none' } }] } },
+		{ id: 'social-share', label: 'Social Share', category: 'Advanced', content: { tagName: 'div', classes: ['mrspb-social-share'], style: { display: 'flex', gap: '10px', 'flex-wrap': 'wrap' }, components: [{ tagName: 'button', content: 'Facebook', attributes: { 'data-mrspb-share': 'facebook' }, style: { padding: '8px 16px', border: 'none', 'border-radius': '6px', background: '#2563eb', color: '#fff', cursor: 'pointer' } }, { tagName: 'button', content: 'Twitter / X', attributes: { 'data-mrspb-share': 'twitter' }, style: { padding: '8px 16px', border: 'none', 'border-radius': '6px', background: '#334155', color: '#fff', cursor: 'pointer' } }, { tagName: 'button', content: 'Copy Link', attributes: { 'data-mrspb-share': 'copy' }, style: { padding: '8px 16px', border: 'none', 'border-radius': '6px', background: '#64748b', color: '#fff', cursor: 'pointer' } }] } }
 	];
 
 	const editor = window.mrspbEditor = grapesjs.init({
@@ -254,6 +268,106 @@
 		} else {
 			document.exitFullscreen();
 		}
+	});
+
+	// Theme toggle
+	const themeToggle = document.getElementById('mrspb-theme-toggle');
+	if ( themeToggle ) {
+		themeToggle.addEventListener('click', () => {
+			document.body.classList.toggle('mrspb-light');
+			themeToggle.textContent = document.body.classList.contains('mrspb-light') ? 'Light' : 'Dark';
+		});
+	}
+
+	// Modal helpers
+	const modalOverlay = document.getElementById('mrspb-modal-overlay');
+	const modalBody = document.getElementById('mrspb-modal-body');
+	const modalTitle = document.getElementById('mrspb-modal-title');
+	const modalSave = document.getElementById('mrspb-modal-save');
+	const modalClose = document.getElementById('mrspb-modal-close');
+	function openModal(title, body, onSave) {
+		modalTitle.textContent = title;
+		modalBody.innerHTML = body;
+		modalOverlay.style.display = 'flex';
+		modalSave.onclick = () => { onSave(); closeModal(); };
+	}
+	function closeModal() { modalOverlay.style.display = 'none'; modalBody.innerHTML = ''; }
+	modalClose?.addEventListener('click', closeModal);
+	modalOverlay?.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+	// Page settings
+	document.getElementById('mrspb-page-settings')?.addEventListener('click', () => {
+		const settings = mrspbData.pageSettings || {};
+		const form = `
+			<label>Page Title Override</label>
+			<input type="text" id="mrspb-ps-title" value="${settings.page_title || ''}" placeholder="Leave empty to use default">
+			<label>Body Classes</label>
+			<input type="text" id="mrspb-ps-class" value="${settings.body_class || ''}" placeholder="e.g. landing-transparent-header">
+			<label>Custom CSS</label>
+			<textarea id="mrspb-ps-css" placeholder=".mrspb-content .my-class { color: red; }">${settings.custom_css || ''}</textarea>
+			<label>Custom JS</label>
+			<textarea id="mrspb-ps-js" placeholder="console.log('hello');">${settings.custom_js || ''}</textarea>
+		`;
+		openModal('Page Settings', form, () => {
+			const payload = new URLSearchParams({
+				action: 'mrspb_save_page_settings',
+				post_id: postId,
+				nonce: mrspbData.nonce,
+				page_title: document.getElementById('mrspb-ps-title').value,
+				body_class: document.getElementById('mrspb-ps-class').value,
+				custom_css: document.getElementById('mrspb-ps-css').value,
+				custom_js: document.getElementById('mrspb-ps-js').value
+			});
+			fetch(mrspbData.ajaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: payload })
+				.then(r => r.json())
+				.then(data => { if (data.success) { mrspbData.pageSettings = data.data; alert('Page settings saved.'); } else { alert('Failed to save page settings.'); } })
+				.catch(() => alert('Failed to save page settings.'));
+		});
+	});
+
+	// Global sections
+	document.getElementById('mrspb-sections')?.addEventListener('click', () => {
+		const selected = editor.getSelected();
+		const form = `
+			<label>Save current selection as section</label>
+			<input type="text" id="mrspb-section-title" placeholder="My Hero Section">
+			<div class="mrspb-section-list" id="mrspb-section-list"></div>
+		`;
+		openModal('Global Sections', form, () => {
+			const title = document.getElementById('mrspb-section-title').value;
+			const target = editor.getSelected();
+			if ( ! title || ! target ) { alert('Enter a title and select an element first.'); return; }
+			const payload = new URLSearchParams({
+				action: 'mrspb_save_section',
+				nonce: mrspbData.nonce,
+				title: title,
+				html: editor.getHtml({ component: target }),
+				css: editor.getCss()
+			});
+			fetch(mrspbData.ajaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: payload })
+				.then(r => r.json())
+				.then(data => { if (data.success) { refreshSectionList(); document.getElementById('mrspb-section-title').value = ''; } else { alert('Failed to save section.'); } })
+				.catch(() => alert('Failed to save section.'));
+		});
+		function refreshSectionList() {
+			fetch(mrspbData.ajaxUrl + '?action=mrspb_get_sections&nonce=' + encodeURIComponent(mrspbData.nonce))
+				.then(r => r.json())
+				.then(data => {
+					const list = document.getElementById('mrspb-section-list');
+					if (!list || !data.success) return;
+					list.innerHTML = data.data.length ? data.data.map(s => `<div class="mrspb-section-item"><span>${s.title}</span><div><button data-id="${s.id}" data-action="insert">Insert</button> <button data-id="${s.id}" data-action="delete" style="background:#ef4444">Delete</button></div></div>`).join('') : '<p>No global sections yet.</p>';
+					list.querySelectorAll('button[data-action="insert"]').forEach(btn => btn.addEventListener('click', () => {
+						const sec = data.data.find(x => x.id == btn.dataset.id);
+						if (sec) editor.addComponents(sec.html + '<style>' + (sec.css || '') + '</style>');
+						closeModal();
+					}));
+					list.querySelectorAll('button[data-action="delete"]').forEach(btn => btn.addEventListener('click', () => {
+						fetch(mrspbData.ajaxUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ action: 'mrspb_delete_section', nonce: mrspbData.nonce, section_id: btn.dataset.id }) })
+							.then(() => refreshSectionList());
+					}));
+				});
+		}
+		refreshSectionList();
 	});
 
 	document.querySelector('.mrspb-save').addEventListener('click', () => {

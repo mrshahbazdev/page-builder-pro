@@ -5,11 +5,11 @@ Tags: page builder, landing page, visual editor, drag and drop, animations
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Advanced drag-and-drop page builder for WordPress powered by GrapesJS with premium blocks, forms, dynamic content and animations.
+Advanced drag-and-drop page builder for WordPress with premium blocks, forms, dynamic content, reusable sections and animations.
 
 == Description ==
 Page Builder Pro is a powerful visual page builder for WordPress that uses the open-source GrapesJS editor. Build landing pages, hero sections, pricing tables, feature grids, forms, carousels and more with a true drag-and-drop canvas, premium blocks, advanced animations, responsive device preview, layer manager and visual Style Manager.
@@ -19,15 +19,18 @@ Page Builder Pro is a powerful visual page builder for WordPress that uses the o
 * Sections, containers, 2/3 column row layouts
 * Premium blocks: hero, feature box, pricing table, testimonial, counter, progress bar, team member, FAQ, call-to-action, newsletter, cookie banner
 * Basic blocks: heading, text, image, button, spacer, divider, SVG icon
-* Media blocks: video embed, map, Swiper carousel, Lottie animation
+* Media blocks: video embed, map, Swiper carousel, Lottie animation, video background
 * Interactive blocks: tabs, accordion, countdown timer, contact form, search form, star rating
-* Dynamic blocks: post title, post excerpt, featured image
+* Advanced blocks: popup/modal, before/after slider, typewriter, particle background, masonry gallery, timeline, pie chart, pricing toggle, post grid, floating bar, social share
+* Dynamic blocks: post title, post excerpt, featured image, post grid shortcode
 * WordPress Media Library image picker
 * AOS scroll animations and GSAP + ScrollTrigger high-end animations
 * Global colors, fonts and responsive visibility controls
-* Top toolbar with Undo, Redo, Code view and Fullscreen
-* Built-in template library with pre-made layouts
-* Per-page CSS generation and clean frontend rendering
+* Page settings: per-page custom CSS, custom JS, body classes and page title override
+* Global sections library: save, insert and reuse sections across pages
+* Dark/Light builder theme toggle
+* Top toolbar with Undo, Redo, Code view, Fullscreen, Sections, Page Settings and Theme toggle
+* 13+ pre-made template kit (SaaS, agency, portfolio, restaurant, webinar, e-commerce, fitness, real-estate, app landing, photography and more)
 * Template export/import as JSON
 * Role-based access control
 * Form submissions with email notifications
@@ -66,6 +69,14 @@ Yes. Use the Templates page to export any built page as JSON or import a layout 
 5. Settings
 
 == Changelog ==
+
+= 1.4.0 =
+* Added advanced blocks: popup/modal, before/after slider, typewriter text, particle background, masonry gallery, timeline, pie chart, pricing toggle, post grid shortcode, floating bar, social share and video background.
+* Added page settings: custom CSS, custom JS, body classes and page title override.
+* Added global sections library to save, insert and reuse sections across pages.
+* Added dark/light builder theme toggle.
+* Added 10+ new pre-made templates.
+* Improved top toolbar UI and builder premium look.
 
 = 1.3.0 =
 * Added form builder, countdown timer, search form, star rating, SVG icon, team member, FAQ, call-to-action, newsletter and cookie banner blocks.

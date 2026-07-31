@@ -1,23 +1,26 @@
 # Page Builder Pro
 
-Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://grapesjs.com/) with premium blocks, forms, dynamic content and high-end animations.
+Advanced drag-and-drop page builder for WordPress powered by [GrapesJS](https://grapesjs.com/) with premium blocks, forms, dynamic content, reusable global sections, page settings and high-end animations.
 
 ## Features
 
 - Visual drag-and-drop editor with sections, rows, columns and widgets
 - Premium blocks: Hero, Feature Box, Pricing Table, Testimonial, Counter, Progress Bar, Team Member, FAQ, Call-to-Action, Newsletter, Cookie Banner
 - Basic blocks: Heading, Text, Image, Button, Spacer, Divider, SVG Icon
-- Media blocks: Video Embed, Map, Swiper Carousel, Lottie Animation
+- Media blocks: Video Embed, Map, Swiper Carousel, Lottie Animation, Video Background
 - Interactive blocks: Tabs, Accordion, Countdown, Contact Form, Search Form, Star Rating
-- Dynamic blocks: Post Title, Post Excerpt, Featured Image
+- Advanced blocks: Popup/Modal, Before/After Slider, Typewriter Text, Particle Background, Masonry Gallery, Timeline, Pie Chart, Pricing Toggle, Post Grid (shortcode), Floating Bar, Social Share
+- Dynamic blocks: Post Title, Post Excerpt, Featured Image, Post Grid
 - Layer / component navigator
 - Visual Style Manager (Typography, Layout, Decorations)
 - Responsive device preview: Desktop, Tablet, Mobile
 - WordPress Media Library integration for images
 - AOS scroll animations and GSAP + ScrollTrigger high-end animations
-- Top toolbar with Undo, Redo, Code view and Fullscreen
-- Built-in template library with pre-made layouts
+- Top toolbar with Undo, Redo, Code view, Fullscreen, Global Sections, Page Settings, Dark/Light toggle
+- 13+ pre-made template kit (SaaS, agency, portfolio, restaurant, webinar, e-commerce, fitness, real-estate, app landing, photography)
 - Device visibility control (hide on desktop/tablet/mobile)
+- Page settings: per-page custom CSS, custom JS, body classes, page title override
+- Global sections library: save, insert and reuse sections across pages
 - Template Export/Import as JSON
 - Global styles: colors, body and heading fonts
 - One-click Save and live Preview
