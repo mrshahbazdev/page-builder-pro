@@ -248,3 +248,59 @@ html, body {
 .gjs-pn-btn.gjs-pn-active {
 	color: #60a5fa;
 }
+
+/* Enhanced block panel */
+.gjs-block-category {
+	background: #1e293b;
+	border-bottom: 1px solid #334155;
+}
+
+.gjs-block-category .gjs-title {
+	color: #e2e8f0;
+	font-weight: 600;
+}
+
+.gjs-block-category.gjs-open .gjs-title {
+	color: #60a5fa;
+}
+
+.gjs-block-c.c120,
+.gjs-block-c.c100 {
+	color: #94a3b8;
+}
+
+.gjs-layer-title {
+	color: #e2e8f0;
+}
+
+.gjs-layer.gjs-selected .gjs-layer-title {
+	color: #60a5fa;
+}
+
+.gjs-layer-item {
+	border-color: #334155;
+}
+
+.gjs-sm-sector .gjs-sm-title {
+	font-weight: 600;
+	color: #e2e8f0;
+}
+
+.gjs-color-warn,
+.gjs-four-color {
+	color: #60a5fa;
+}
+
+.gjs-mdl-dialog {
+	background: #1e293b;
+	color: #e2e8f0;
+}
+
+.gjs-mdl-header {
+	background: #0f172a;
+	border-bottom: 1px solid #334155;
+}
+
+.gjs-mdl-btn-close {
+	color: #94a3b8;
+}

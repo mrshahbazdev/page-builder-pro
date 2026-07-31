@@ -21,6 +21,8 @@ class MRSPB {
 		add_action( 'admin_bar_menu', array( __CLASS__, 'admin_bar_link' ), 999 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'frontend_assets' ) );
 		add_action( 'wp_ajax_mrspb_template_list', array( __CLASS__, 'ajax_template_list' ) );
+		add_action( 'wp_ajax_mrspb_submit_form', array( __CLASS__, 'ajax_submit_form' ) );
+		add_action( 'wp_ajax_nopriv_mrspb_submit_form', array( __CLASS__, 'ajax_submit_form' ) );
 	}
 
 	public static function activate() {
@@ -89,8 +91,9 @@ class MRSPB {
 		wp_enqueue_media();
 		wp_enqueue_style( 'grapesjs', MRSPB_URL . 'assets/vendor/grapesjs/grapes.min.css', array(), '0.22.2' );
 		wp_enqueue_script( 'grapesjs', MRSPB_URL . 'assets/vendor/grapesjs/grapes.min.js', array(), '0.22.2', true );
+		wp_enqueue_script( 'lottie', MRSPB_URL . 'assets/vendor/lottie/lottie.min.js', array(), '5.12.2', true );
 		wp_enqueue_style( 'mrspb-admin', MRSPB_URL . 'assets/css/admin.css', array( 'grapesjs' ), MRSPB_VERSION );
-		wp_enqueue_script( 'mrspb-admin', MRSPB_URL . 'assets/js/admin.js', array( 'grapesjs' ), MRSPB_VERSION, true );
+		wp_enqueue_script( 'mrspb-admin', MRSPB_URL . 'assets/js/admin.js', array( 'grapesjs', 'lottie' ), MRSPB_VERSION, true );
 
 		$templates = self::get_templates_list();
 		wp_localize_script(
@@ -109,11 +112,11 @@ class MRSPB {
 	public static function get_templates_list() {
 		$dir   = MRSPB_DIR . 'assets/templates/';
 		$files = array();
-		if ( ! is_dir( $dir ) ) {
-			return $files;
-		}
 		WP_Filesystem();
 		global $wp_filesystem;
+		if ( ! $wp_filesystem->is_dir( $dir ) ) {
+			return $files;
+		}
 		$iterator = new DirectoryIterator( $dir );
 		foreach ( $iterator as $file ) {
 			if ( $file->isFile() && $file->getExtension() === 'json' ) {
@@ -141,11 +144,11 @@ class MRSPB {
 			wp_send_json_error( 'Missing slug' );
 		}
 		$path = MRSPB_DIR . 'assets/templates/' . $slug . '.json';
-		if ( ! file_exists( $path ) ) {
-			wp_send_json_error( 'Template not found' );
-		}
 		WP_Filesystem();
 		global $wp_filesystem;
+		if ( ! $wp_filesystem->is_file( $path ) ) {
+			wp_send_json_error( 'Template not found' );
+		}
 		$contents = $wp_filesystem->get_contents( $path );
 		$json = $contents ? json_decode( $contents, true ) : array();
 		if ( ! is_array( $json ) || ! isset( $json['html'] ) ) {
@@ -182,7 +185,7 @@ class MRSPB {
 				</div>
 				<div class="mrspb-card">
 					<h2><?php esc_html_e( 'Pre-Made Templates', 'page-builder-pro' ); ?></h2>
-					<p><?php esc_html_e( 'Hero, Pricing and About layouts are available in the builder.', 'page-builder-pro' ); ?></p>
+					<p><?php esc_html_e( 'Hero, Pricing, About, Contact and SaaS layouts are available in the builder.', 'page-builder-pro' ); ?></p>
 					<a href="<?php echo esc_url( admin_url( 'admin.php?page=page-builder-pro-builder&post=2' ) ); ?>" class="button button-secondary"><?php esc_html_e( 'Open Builder', 'page-builder-pro' ); ?></a>
 				</div>
 				<div class="mrspb-card">
@@ -349,12 +352,12 @@ class MRSPB {
 			wp_die( esc_html__( 'Permission denied.', 'page-builder-pro' ) );
 		}
 		$post_id = isset( $_POST['import_post_id'] ) ? intval( $_POST['import_post_id'] ) : 0;
-		$json    = isset( $_POST['import_json'] ) ? wp_unslash( $_POST['import_json'] ) : '';
+		$json    = isset( $_POST['import_json'] ) ? sanitize_textarea_field( wp_unslash( $_POST['import_json'] ) ) : '';
 		$data    = json_decode( $json, true );
 		if ( ! $post_id || ! is_array( $data ) ) {
 			wp_die( esc_html__( 'Invalid data.', 'page-builder-pro' ) );
 		}
-		update_post_meta( $post_id, '_mrspb_html', wp_kses_post( $data['html'] ?? '' ) );
+		update_post_meta( $post_id, '_mrspb_html', self::sanitize_builder_html( $data['html'] ?? '' ) );
 		update_post_meta( $post_id, '_mrspb_css', sanitize_textarea_field( $data['css'] ?? '' ) );
 		wp_safe_redirect( admin_url( 'admin.php?page=page-builder-pro-templates&notice=imported' ) );
 		exit;
@@ -485,7 +488,7 @@ class MRSPB {
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			wp_send_json_error( 'Permission denied' );
 		}
-		$html = wp_kses_post( wp_unslash( $_POST['html'] ) );
+		$html = self::sanitize_builder_html( wp_unslash( $_POST['html'] ) );
 		$css  = sanitize_textarea_field( wp_unslash( $_POST['css'] ) );
 		update_post_meta( $post_id, '_mrspb_html', $html );
 		update_post_meta( $post_id, '_mrspb_css', $css );
@@ -520,6 +523,311 @@ class MRSPB {
 		wp_send_json_success( array( 'url' => $src, 'alt' => get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) );
 	}
 
+	public static function ajax_submit_form() {
+		check_ajax_referer( 'mrspb_public_nonce', 'nonce' );
+		$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+		$form_id = isset( $_POST['form_id'] ) ? sanitize_text_field( wp_unslash( $_POST['form_id'] ) ) : '';
+		$to      = get_option( 'admin_email' );
+		$subject = sprintf(
+			/* translators: %s: site name */
+			__( 'New form submission from %s', 'page-builder-pro' ),
+			get_bloginfo( 'name' )
+		);
+		$lines   = array(
+			__( 'Form ID', 'page-builder-pro' ) . ': ' . ( $form_id ? $form_id : 'contact' ),
+			__( 'Page', 'page-builder-pro' ) . ': ' . ( $post_id ? get_permalink( $post_id ) : '' ),
+		);
+		$exclude = array( 'action', 'nonce', 'post_id', 'form_id', '_wp_http_referer' );
+		foreach ( $_POST as $key => $value ) {
+			if ( in_array( $key, $exclude, true ) ) {
+				continue;
+			}
+			$label = sanitize_text_field( $key );
+			if ( 'email' === $key ) {
+				$val = sanitize_email( $value );
+			} elseif ( 'message' === $key ) {
+				$val = sanitize_textarea_field( $value );
+			} else {
+				$val = is_array( $value ) ? implode( ', ', array_map( 'sanitize_text_field', $value ) ) : sanitize_text_field( $value );
+			}
+			$lines[] = $label . ': ' . $val;
+		}
+		$body = implode( "\n", $lines );
+		wp_mail( $to, $subject, $body );
+		wp_send_json_success( array( 'message' => __( 'Sent', 'page-builder-pro' ) ) );
+	}
+
+	public static function get_allowed_html() {
+		$allowed = wp_kses_allowed_html( 'post' );
+		$common  = array(
+			'class'   => true,
+			'id'      => true,
+			'style'   => true,
+			'title'   => true,
+			'dir'     => true,
+			'lang'    => true,
+			'role'    => true,
+			'aria-*'  => true,
+			'data-*'  => true,
+		);
+
+		$allowed['form'] = array_merge(
+			$common,
+			array(
+				'action'          => true,
+				'method'          => true,
+				'enctype'         => true,
+				'name'            => true,
+				'target'          => true,
+				'accept-charset'  => true,
+				'novalidate'      => true,
+			)
+		);
+
+		$allowed['input'] = array_merge(
+			$common,
+			array(
+				'type'        => true,
+				'name'        => true,
+				'value'       => true,
+				'placeholder' => true,
+				'required'    => true,
+				'checked'     => true,
+				'disabled'    => true,
+				'readonly'    => true,
+				'min'         => true,
+				'max'         => true,
+				'step'        => true,
+				'size'        => true,
+				'maxlength'   => true,
+				'pattern'     => true,
+				'autocomplete' => true,
+				'autofocus'   => true,
+				'multiple'    => true,
+			)
+		);
+
+		$allowed['textarea'] = array_merge(
+			$allowed['textarea'],
+			array(
+				'rows'       => true,
+				'cols'       => true,
+				'placeholder' => true,
+				'required'   => true,
+				'minlength'  => true,
+				'maxlength'  => true,
+				'wrap'       => true,
+			)
+		);
+
+		$allowed['button'] = array_merge(
+			$allowed['button'],
+			array(
+				'type'  => true,
+				'name'  => true,
+				'value' => true,
+			)
+		);
+
+		$allowed['select'] = array_merge(
+			$common,
+			array(
+				'name'     => true,
+				'multiple' => true,
+				'required' => true,
+				'size'     => true,
+			)
+		);
+
+		$allowed['option'] = array_merge(
+			$common,
+			array(
+				'value'    => true,
+				'selected' => true,
+			)
+		);
+
+		$allowed['optgroup'] = array_merge(
+			$common,
+			array(
+				'label'    => true,
+				'disabled' => true,
+			)
+		);
+
+		$allowed['label'] = array_merge(
+			$common,
+			array( 'for' => true )
+		);
+
+		$allowed['fieldset'] = $common;
+		$allowed['legend']   = $common;
+
+		$allowed['iframe'] = array_merge(
+			$common,
+			array(
+				'src'             => true,
+				'width'           => true,
+				'height'          => true,
+				'frameborder'     => true,
+				'allowfullscreen' => true,
+				'loading'         => true,
+				'title'           => true,
+				'scrolling'       => true,
+			)
+		);
+
+		$svg_common = array_merge(
+			$common,
+			array(
+				'viewBox'               => true,
+				'xmlns'                 => true,
+				'fill'                  => true,
+				'stroke'                => true,
+				'stroke-width'          => true,
+				'width'                 => true,
+				'height'                => true,
+				'preserveAspectRatio'   => true,
+			)
+		);
+
+		$allowed['svg'] = $svg_common;
+		foreach ( array( 'path', 'circle', 'rect', 'line', 'polyline', 'polygon', 'g', 'defs', 'use' ) as $tag ) {
+			$allowed[ $tag ] = array_merge(
+				$svg_common,
+				array(
+					'd'             => true,
+					'cx'            => true,
+					'cy'            => true,
+					'r'             => true,
+					'x'             => true,
+					'y'             => true,
+					'x1'            => true,
+					'y1'            => true,
+					'x2'            => true,
+					'y2'            => true,
+					'points'        => true,
+					'transform'     => true,
+					'href'          => true,
+				)
+			);
+		}
+
+		$allowed['lottie-player'] = array_merge(
+			$common,
+			array(
+				'src'       => true,
+				'background' => true,
+				'speed'     => true,
+				'loop'      => true,
+				'autoplay'  => true,
+				'controls'  => true,
+				'mode'      => true,
+			)
+		);
+
+		return $allowed;
+	}
+
+	public static function sanitize_builder_html( $html ) {
+		return wp_kses( $html, self::get_allowed_html() );
+	}
+
+	public static function inject_form_nonces( $html ) {
+		$nonce = wp_nonce_field( 'mrspb_public_nonce', 'nonce', true, false );
+		if ( ! $nonce ) {
+			return $html;
+		}
+		return preg_replace( '/(<form[^>]*>)/i', '$1' . $nonce, $html );
+	}
+
+	public static function replace_dynamic_content( $html ) {
+		$post_id = get_the_ID();
+		if ( ! $post_id ) {
+			return $html;
+		}
+		$title   = get_post_field( 'post_title', $post_id );
+		$excerpt = get_post_field( 'post_excerpt', $post_id );
+		if ( ! $excerpt ) {
+			$excerpt = wp_trim_words( strip_shortcodes( get_post_field( 'post_content', $post_id ) ), 55 );
+		}
+		$html    = preg_replace_callback(
+			'/(<[a-z0-9]+\b(?=[^>]*class="[^"]*mrspb-dynamic[^"]*")(?=[^>]*data-dyn="(post_title|post_excerpt)")[^>]*>)(.*?)(<\/[a-z0-9]+>)/is',
+			function( $m ) use ( $title, $excerpt ) {
+				$content = ( 'post_title' === $m[2] ) ? $title : $excerpt;
+				return $m[1] . esc_html( $content ) . $m[4];
+			},
+			$html
+		);
+		$image_url = get_the_post_thumbnail_url( $post_id, 'full' );
+		if ( $image_url ) {
+			$html = preg_replace_callback(
+				'/<img\b(?=[^>]*class="[^"]*mrspb-dynamic[^"]*")(?=[^>]*data-dyn="featured_image")[^>]*>/i',
+				function( $m ) use ( $image_url ) {
+					$replaced = preg_replace( '/src="[^"]*"/i', 'src="' . esc_url( $image_url ) . '"', $m[0] );
+					return $replaced ? $replaced : $m[0];
+				},
+				$html
+			);
+		}
+		return $html;
+	}
+
+	public static function frontend_assets() {
+		if ( ! is_singular() ) {
+			return;
+		}
+		$post_id = get_queried_object_id();
+		if ( ! $post_id ) {
+			return;
+		}
+		$html = get_post_meta( $post_id, '_mrspb_html', true );
+		if ( ! $html ) {
+			return;
+		}
+
+		$css = get_post_meta( $post_id, '_mrspb_css', true );
+		wp_register_style( 'mrspb-frontend-base', false, array(), MRSPB_VERSION );
+		wp_enqueue_style( 'mrspb-frontend-base' );
+		wp_add_inline_style( 'mrspb-frontend-base', self::get_global_styles_css() . self::get_frontend_base_css() . ( $css ? wp_strip_all_tags( $css ) : '' ) );
+
+		$deps = array();
+		if ( strpos( $html, 'data-aos' ) !== false ) {
+			wp_enqueue_style( 'mrspb-aos', MRSPB_URL . 'assets/vendor/aos/aos.css', array(), MRSPB_VERSION );
+			wp_enqueue_script( 'mrspb-aos', MRSPB_URL . 'assets/vendor/aos/aos.js', array(), MRSPB_VERSION, true );
+			$deps[] = 'mrspb-aos';
+		}
+		if ( strpos( $html, 'swiper' ) !== false || strpos( $html, 'swiper-wrapper' ) !== false ) {
+			wp_enqueue_style( 'mrspb-swiper', MRSPB_URL . 'assets/vendor/swiper/swiper-bundle.min.css', array(), MRSPB_VERSION );
+			wp_enqueue_script( 'mrspb-swiper', MRSPB_URL . 'assets/vendor/swiper/swiper-bundle.min.js', array(), MRSPB_VERSION, true );
+			$deps[] = 'mrspb-swiper';
+		}
+		if ( strpos( $html, 'data-gsap' ) !== false ) {
+			wp_enqueue_script( 'mrspb-gsap', MRSPB_URL . 'assets/vendor/gsap/gsap.min.js', array(), MRSPB_VERSION, true );
+			wp_enqueue_script( 'mrspb-scrolltrigger', MRSPB_URL . 'assets/vendor/gsap/ScrollTrigger.min.js', array( 'mrspb-gsap' ), MRSPB_VERSION, true );
+			$deps[] = 'mrspb-gsap';
+			$deps[] = 'mrspb-scrolltrigger';
+		}
+		if ( strpos( $html, 'mrspb-lottie' ) !== false ) {
+			wp_enqueue_script( 'mrspb-lottie', MRSPB_URL . 'assets/vendor/lottie/lottie.min.js', array(), MRSPB_VERSION, true );
+			$deps[] = 'mrspb-lottie';
+		}
+
+		wp_register_script( 'mrspb-frontend', MRSPB_URL . 'assets/js/frontend.js', $deps, MRSPB_VERSION, true );
+		wp_enqueue_script( 'mrspb-frontend' );
+		wp_localize_script(
+			'mrspb-frontend',
+			'mrspbData',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'postId'  => $post_id,
+				'strings' => array(
+					'success' => __( 'Thank you! We will get back to you soon.', 'page-builder-pro' ),
+				),
+			)
+		);
+	}
+
 	public static function frontend_render( $content ) {
 		if ( is_admin() || ! in_the_loop() || ! is_main_query() ) {
 			return $content;
@@ -532,27 +840,29 @@ class MRSPB {
 		if ( ! $html ) {
 			return $content;
 		}
-		$css  = get_post_meta( $post_id, '_mrspb_css', true );
-		$out  = self::get_global_styles();
-		if ( $css ) {
-			$out .= '<style>' . wp_strip_all_tags( $css ) . '</style>';
-		}
-		$out .= '<style>.mrspb-content [data-aos]{opacity:1;}</style>';
-		$out .= '<div class="mrspb-content">' . $html . '</div>';
-
-		if ( strpos( $html, 'data-aos' ) !== false ) {
-			$out .= '<script>document.addEventListener("DOMContentLoaded",function(){if(typeof AOS!=="undefined"){AOS.init({once:true,duration:800});}});</script>';
-		}
-		if ( strpos( $html, 'swiper' ) !== false || strpos( $html, 'swiper-wrapper' ) !== false ) {
-			$out .= '<script>document.addEventListener("DOMContentLoaded",function(){if(typeof Swiper!=="undefined"){document.querySelectorAll(".mrspb-swiper").forEach(function(el){new Swiper(el,{loop:true,pagination:{el:".swiper-pagination",clickable:true},navigation:{nextEl:".swiper-button-next",prevEl:".swiper-button-prev"}});});}});</script>';
-		}
-		if ( strpos( $html, 'data-gsap' ) !== false ) {
-			$out .= '<script>document.addEventListener("DOMContentLoaded",function(){if(typeof gsap!=="undefined"&&typeof ScrollTrigger!=="undefined"){gsap.registerPlugin(ScrollTrigger);document.querySelectorAll("[data-gsap]").forEach(function(el){var anim=el.getAttribute("data-gsap");var y=0,x=0,scale=1,rotation=0,opacity=0;var dur=0.8;switch(anim){case"slide-up":y=60;opacity=0;break;case"slide-down":y=-60;opacity=0;break;case"slide-left":x=60;opacity=0;break;case"slide-right":x=-60;opacity=0;break;case"zoom-in":scale=0.8;opacity=0;break;case"zoom-out":scale=1.2;opacity=0;break;case"flip-left":rotation=-90;opacity=0;break;case"bounce":y=60;break;case"fade":opacity=0;break;default:opacity=0;}gsap.fromTo(el,{y:y,x:x,scale:scale,rotation:rotation,opacity:opacity},{y:0,x:0,scale:1,rotation:0,opacity:1,duration:dur,ease:"power2.out",scrollTrigger:{trigger:el,start:"top 85%",toggleActions:"play none none none"}});});}});</script>';
-		}
-		return $out;
+		$html = self::replace_dynamic_content( $html );
+		$html = self::inject_form_nonces( $html );
+		return '<div class="mrspb-content">' . $html . '</div>';
 	}
 
-	public static function get_global_styles() {
+	public static function get_frontend_base_css() {
+		$css  = '.mrspb-content{box-sizing:border-box;}';
+		$css .= '.mrspb-content *{box-sizing:inherit;}';
+		$css .= '.mrspb-form{margin:0;}';
+		$css .= '.mrspb-form input,.mrspb-form textarea,.mrspb-form select,.mrspb-form button{font-family:inherit;}';
+		$css .= '.mrspb-form-message{padding:20px;background:#dcfce7;color:#166534;border-radius:8px;text-align:center;}';
+		$css .= '.mrspb-countdown .mrspb-countdown-label{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#64748b;}';
+		$css .= '.mrspb-faq-item .mrspb-faq-answer{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 15px;}';
+		$css .= '.mrspb-faq-item.open .mrspb-faq-answer{max-height:500px;padding:0 15px 15px;}';
+		$css .= '.mrspb-faq-question{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:15px;font-weight:600;}';
+		$css .= '.mrspb-star-rating{color:#fbbf24;font-size:24px;letter-spacing:2px;}';
+		$css .= '.mrspb-cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:9999;display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#1e293b;color:#fff;}';
+		$css .= '.mrspb-cookie-banner button{padding:8px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;}';
+		$css .= '.mrspb-lottie{display:block;margin:0 auto;}';
+		return $css;
+	}
+
+	public static function get_global_styles_css() {
 		$colors = get_option( 'mrspb_global_colors', array( 'primary' => '#2563eb', 'secondary' => '#7c3aed', 'dark' => '#0f172a' ) );
 		$fonts  = get_option( 'mrspb_global_fonts', array( 'body' => '', 'heading' => '' ) );
 		$css = ':root{';
@@ -569,29 +879,10 @@ class MRSPB {
 		if ( $heading_font ) {
 			$extra .= '.mrspb-content h1,.mrspb-content h2,.mrspb-content h3,.mrspb-content h4,.mrspb-content h5,.mrspb-content h6{font-family:' . $heading_font . ';}';
 		}
-		return '<style>' . $css . $extra . '</style>';
+		return $css . $extra;
 	}
 
-	public static function frontend_assets() {
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			return;
-		}
-		$html = get_post_meta( $post_id, '_mrspb_html', true );
-		if ( ! $html ) {
-			return;
-		}
-		if ( strpos( $html, 'data-aos' ) !== false ) {
-			wp_enqueue_style( 'aos', MRSPB_URL . 'assets/vendor/aos/aos.css', array(), '2.3.4' );
-			wp_enqueue_script( 'aos', MRSPB_URL . 'assets/vendor/aos/aos.js', array(), '2.3.4', true );
-		}
-		if ( strpos( $html, 'swiper' ) !== false || strpos( $html, 'swiper-wrapper' ) !== false ) {
-			wp_enqueue_style( 'swiper', MRSPB_URL . 'assets/vendor/swiper/swiper-bundle.min.css', array(), '11.1.14' );
-			wp_enqueue_script( 'swiper', MRSPB_URL . 'assets/vendor/swiper/swiper-bundle.min.js', array(), '11.1.14', true );
-		}
-		if ( strpos( $html, 'data-gsap' ) !== false ) {
-			wp_enqueue_script( 'gsap', MRSPB_URL . 'assets/vendor/gsap/gsap.min.js', array(), '3.12.5', true );
-			wp_enqueue_script( 'gsap-scrolltrigger', MRSPB_URL . 'assets/vendor/gsap/ScrollTrigger.min.js', array( 'gsap' ), '3.12.5', true );
-		}
+	public static function get_global_styles() {
+		return '<style>' . self::get_global_styles_css() . '</style>';
 	}
 }
